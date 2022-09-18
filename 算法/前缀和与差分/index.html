@@ -143,10 +143,10 @@
   <!--[if lt IE 9]> <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script> <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
 
   <!-- ga & ba script hoook -->
-  <link rel="canonical" href="https://every-breaking-wave.github.io/cn/简单排序算法/">
+  <link rel="canonical" href="https://every-breaking-wave.github.io/算法/前缀和与差分/">
   <title>
     
-      简单排序算法 - breaking-wave&#39;s blog
+      前缀和与差分 - breaking-wave&#39;s blog
     
   </title>
 <meta name="generator" content="Hexo 5.4.0"></head>
@@ -243,7 +243,7 @@
       <div class="navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href="/">首页</a>
+            <a href="/">HOME</a>
           </li>
 
           
@@ -253,7 +253,7 @@
           <li>
             <a href="/about/">
               
-              关于
+              ABOUT
               
               
             </a>
@@ -264,7 +264,7 @@
           <li>
             <a href="/categories/">
               
-              分类
+              CATEGORIES
               
               
             </a>
@@ -275,7 +275,7 @@
           <li>
             <a href="/archive/">
               
-              归档
+              ARCHIVES
               
               
             </a>
@@ -286,7 +286,7 @@
           <li>
             <a href="/tags/">
               
-              标签
+              TAGS
               
               
             </a>
@@ -297,7 +297,7 @@
           
           <li>
             <a class="popup-trigger">
-              <span class="search-icon"></span>搜索</a>
+              <span class="search-icon"></span>SEARCH</a>
           </li>
           
 
@@ -356,19 +356,19 @@
     .body--light {
       /* intro-header */
       --intro-header-background-image-url-home: url('/img/header_img/hiten2.jpg');
-      --intro-header-background-image-url-post: url('/img/scenery/default.jpg');
-      --intro-header-background-image-url-page: url('//img/scenery/default.jpg');
+      --intro-header-background-image-url-post: url('/img/header_img/lml_bg.jpg');
+      --intro-header-background-image-url-page: url('//img/header_img/lml_bg.jpg');
     }
     .body--dark {
       --intro-header-background-image-url-home: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/header_img/hiten2.jpg');
-      --intro-header-background-image-url-post: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/scenery/default.jpg');
-      --intro-header-background-image-url-page: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('//img/scenery/default.jpg');
+      --intro-header-background-image-url-post: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/header_img/lml_bg.jpg');
+      --intro-header-background-image-url-page: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('//img/header_img/lml_bg.jpg');
     }
 
     header.intro-header {
        /*post*/
         background-image: var(--intro-header-background-image-url-post);
-        /* background-image: url('/img/scenery/default.jpg'); */
+        /* background-image: url('/img/header_img/lml_bg.jpg'); */
       
     }
 
@@ -396,11 +396,11 @@
               <a class="tag" href="/tags/#算法学习" title="算法学习">算法学习</a>
               
             </div>
-            <h1>简单排序算法</h1>
+            <h1>前缀和与差分</h1>
             <h2 class="subheading"></h2>
             <span class="meta">
               Posted by breaking-wave on
-              2022-09-17
+              2022-09-18
             </span>
 
 
@@ -408,11 +408,11 @@
             <!-- WordCount start -->
             <div class="blank_box"></div>
             <span class="meta">
-              Estimated Reading Time <span class="post-count">2</span> Minutes
+              Estimated Reading Time <span class="post-count">4</span> Minutes
             </span>
             <div class="blank_box"></div>
             <span class="meta">
-              Words <span class="post-count">562</span> In Total
+              Words <span class="post-count">912</span> In Total
             </span>
             <div class="blank_box"></div>
             <!-- WordCount end -->
@@ -474,47 +474,52 @@
       <!-- Post Container -->
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
-        <h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p>稳定的排序指相同大小的数排完之后顺序不变</p>
+        <h2 id="前缀和问题">前缀和问题</h2>
+<p>前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用<strong>空间换时间</strong>的策略。</p>
 <ul>
-<li>快排不稳定</li>
-<li>归并排序稳定</li>
+<li>一维前缀和</li>
 </ul>
-<h4 id="1-快排-平均时间复杂度：O-nlogn-）"><a href="#1-快排-平均时间复杂度：O-nlogn-）" class="headerlink" title="1. 快排 (平均时间复杂度：O(nlogn) ）"></a>1. 快排 (平均时间复杂度：O(nlogn) ）</h4><ul>
-<li>确定分界点 ： q[l], q[l + r /2 ], q[r] 均可， 对于有一定顺序的选择 l + r / 2</li>
-<li>调整区间： 使左边所有数均小于x，右边所有数大于x （<strong>key step</strong>)</li>
-<li>递归处理左右两端</li>
-</ul>
-<p>调整方式：<strong>双指针法</strong></p>
+<p>$$<br>
+S[i]=a[1]+a[2]+…a[i] \ a[l]+…+a[r]=S[r]−S[l−1]<br>
+$$</p>
 <ul>
-<li>左右两个指针指向数组首位</li>
-<li>对于左指针，若所指数字 ≤ x，指针右移，对于右指针操作相反</li>
-<li>直到两指针无法移动，<strong>交换两个指针对应位置的数</strong></li>
-<li>之后两指针继续按照上述方式向中间移动</li>
+<li>二维前缀和</li>
 </ul>
-<p>易错点：快排时选取的边界不当可能导致死循环</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(<span class="keyword">int</span> q[], <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l &gt;= r) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> x = q[(l + r + <span class="number">1</span>) &gt;&gt; <span class="number">1</span>];   <span class="comment">// 这里是 l + r 还是 l + r + 1 取决于后面递归的时候用的是i 还是 j</span></span><br><span class="line">    <span class="keyword">int</span> i = l - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> j = r + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">        <span class="keyword">do</span> i ++ ; <span class="keyword">while</span> (q[i] &lt; x);   <span class="comment">// 先执行一遍</span></span><br><span class="line">        <span class="keyword">do</span> j -- ; <span class="keyword">while</span> (q[j] &gt; x);</span><br><span class="line">        <span class="keyword">if</span> (i &lt; j) </span><br><span class="line">            swap(q[i], q[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 以上循环结束后，i &gt;= j</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// int i = l, j = r;</span></span><br><span class="line">    <span class="comment">// while(i &lt; j) &#123;</span></span><br><span class="line">    <span class="comment">//     while(q[i] &lt; x) i++;</span></span><br><span class="line">    <span class="comment">//     while(q[j] &gt; x) j--;</span></span><br><span class="line">    <span class="comment">//     if(i &lt; j)</span></span><br><span class="line">    <span class="comment">//         swap(q[i], q[j]);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// 注释写法会出现死循环，因为可能会出现两侧指针指向的值都等于x的</span></span><br><span class="line">    <span class="comment">// 为了是下行的 i - 1 != r, i应该至少移动两次</span></span><br><span class="line">    quick_sort(q, l, i - <span class="number">1</span>);   <span class="comment">// 取决于这里</span></span><br><span class="line">    quick_sort(q, i, r);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="2-归并排序-用于合并两个有序数列，时间复杂度：O-nlogn"><a href="#2-归并排序-用于合并两个有序数列，时间复杂度：O-nlogn" class="headerlink" title="2. 归并排序 (用于合并两个有序数列，时间复杂度：O(nlogn))"></a>2. 归并排序 (用于合并两个有序数列，时间复杂度：O(nlogn))</h4><ol>
-<li>确定分界点 mid = (l + r ) /2</li>
-<li>递归排序left， right</li>
-<li>归并，两边合二为一 （key step)<ul>
-<li>注意处理剩余的部分</li>
+<p>$$<br>
+S[i, j] = 第i行j列格子左上部分所有元素的和 \<br>
+以(x1, y1)为左上角，(x2, y2)为右下角的子矩阵的和为：\<br>
+S[x2, y2] - S[x1 - 1, y2] - S[x2, y1 - 1] + S[x1 - 1, y1 - 1]<br>
+$$</p>
+<h2 id="一维差分问题">一维差分问题</h2>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0.png" alt=""></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//差分 时间复杂度 o(m)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N], b[N];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;a[i]);</span><br><span class="line">        b[i] = a[i] - a[i - <span class="number">1</span>];      <span class="comment">//构建差分数组</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> l, r, c;</span><br><span class="line">    <span class="keyword">while</span> (m--)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>, &amp;l, &amp;r, &amp;c);</span><br><span class="line">        b[l] += c;     <span class="comment">//将序列中[l, r]之间的每个数都加上c</span></span><br><span class="line">        b[r + <span class="number">1</span>] -= c;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        a[i] = b[i] + a[i - <span class="number">1</span>];    <span class="comment">//前缀和运算</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, a[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到我们构造了差分数组 b，且有<br>
+$$<br>
+b[n]=a[n]−a[n−1]<br>
+$$<br>
+<strong>对于b[n] 的更改会影响a[n] 从n开始的每一个值</strong>， 因此我们对a进行批量修改时，只需要更改b中对应的位置即可。</p>
+<h2 id="二维差分问题">二维差分问题</h2>
+<p>我们将问题拓展到二维来看：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e3</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N][N], b[N][N];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x1, <span class="keyword">int</span> y1, <span class="keyword">int</span> x2, <span class="keyword">int</span> y2, <span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">    b[x1][y1] += c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y1] -= c;</span><br><span class="line">    b[x1][y2 + <span class="number">1</span>] -= c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y2 + <span class="number">1</span>] += c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m, q;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m &gt;&gt; q;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">            cin &gt;&gt; a[i][j];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            <span class="built_in">insert</span>(i, j, i, j, a[i][j]);      <span class="comment">//构建差分数组</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (q--)&#123;</span><br><span class="line">        <span class="keyword">int</span> x1, y1, x2, y2, c;</span><br><span class="line">        cin &gt;&gt; x1 &gt;&gt; y1 &gt;&gt; x2 &gt;&gt; y2 &gt;&gt; c;</span><br><span class="line">        <span class="built_in">insert</span>(x1, y1, x2, y2, c);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            b[i][j] += b[i - <span class="number">1</span>][j] + b[i][j - <span class="number">1</span>] - b[i - <span class="number">1</span>][j - <span class="number">1</span>]; </span><br><span class="line">            <span class="comment">//二维前缀和，直接在b上处理，因为 a[1][1] == b[1][1]</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            cout &lt;&lt; b[i][j] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>与一维问题中不同的处理时，在初始化差分数组 b 时，我们采用了和更新 b 一样的接口 <strong>insert</strong>， 可以理解为 a 是在一个初始全为0的数组上逐个插入的，而 b 也随着 a 的插入更新。</p>
+<h3 id="局限性">局限性</h3>
+<p>差分算法看上去很方便但有不小的局限，每次对前缀和数组（a）的批量更改变成了对 差分数组（b）的常数次更改，的确减少了计算次数，但缺点在于改变的结果无法马上反应到前缀和数组上，若想得到前缀和数组中的具体的值，仍然需要借助差分数组遍历更新（在一维中这个代价是O(n)) ，可见这种算法有以下使用情景：</p>
+<ul>
+<li>对于数组有多次的，连续区间上的统一更改</li>
 </ul>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">merge_sort</span><span class="params">(<span class="keyword">int</span> q[], <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(l &gt;= r) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> mid = (l + r) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">    merge_sort(q, l, mid);</span><br><span class="line">    merge_sort(q, mid + <span class="number">1</span>, r);</span><br><span class="line">    <span class="keyword">int</span> i = l, j = mid + <span class="number">1</span>, k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= r) &#123;</span><br><span class="line">        <span class="keyword">if</span>(q[i] &lt;= q[j]) &#123;</span><br><span class="line">            tmp[k++] = q[i++];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            tmp[k++] = q[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid ) tmp[k++] = q[i++];</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= r) tmp[k++] = q[j++];</span><br><span class="line">    <span class="keyword">for</span> (i = l, j = <span class="number">0</span>; i &lt;= r; ++i, ++j) &#123;</span><br><span class="line">        q[i] = tmp[j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不适合：</p>
+<ul>
+<li>对数组进行少量的，非连续或不统一的更改</li>
+</ul>
 
 
         <hr>
         <!-- Pager -->
         <ul class="pager">
           
-          <li class="previous">
-            <a href="/undefined/前缀和与差分/" data-toggle="tooltip" data-placement="top" title="前缀和与差分">&larr; Previous Post</a>
-          </li>
-          
           
           <li class="next">
-            <a href="/cn/k8s上的数据持久化/" data-toggle="tooltip" data-placement="top" title="k8s上的数据持久化">Next Post &rarr;</a>
+            <a href="/算法/简单排序算法/" data-toggle="tooltip" data-placement="top" title="简单排序算法">Next Post &rarr;</a>
           </li>
           
         </ul>
@@ -526,7 +531,7 @@
 <div class="tip">
   <p>
     
-      如果您喜欢此博客或发现它对您有用，则欢迎对此发表评论。 也欢迎您共享此博客，以便更多人可以参与。 如果博客中使用的图像侵犯了您的版权，请与作者联系以将其删除。 谢谢 ！
+      If you like this blog or find it useful for you, you are welcome to comment on it. You are also welcome to share this blog, so that more people can participate in it. If the images used in the blog infringe your copyright, please contact the author to delete them. Thank you !
     
   </p>
 </div>
@@ -563,7 +568,7 @@
       </a>
     </li>
     <li class="social-share-li">
-      <a target="_blank" class="social-share-icon" href="mailto:?subject=简单排序算法&body=Hi,I found this website and thought you might like it https://every-breaking-wave.github.io/cn/简单排序算法/">
+      <a target="_blank" class="social-share-icon" href="mailto:?subject=前缀和与差分&body=Hi,I found this website and thought you might like it https://every-breaking-wave.github.io/算法/前缀和与差分/">
         <i class="fa fa-envelope fa-1x" aria-hidden="true"></i>
       </a>
     </li>
@@ -598,7 +603,7 @@
       repo: 'myBlogComments',
       owner: 'every-breaking-wave',
       admin: 'every-breaking-wave ',
-      id: 'Sat Sep 17 2022 00:22:57 GMT+0800', // Ensure uniqueness and length less than 50
+      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // Ensure uniqueness and length less than 50
       distractionFreeMode: false, // Facebook-like distraction free mode
       perPage: 10,
       pagerDirection: 'last',
@@ -669,7 +674,7 @@
     }
 
     const gitment = new Gitment({
-      id: 'Sat Sep 17 2022 00:22:57 GMT+0800', // optional
+      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // optional
       owner: 'every-breaking-wave',
       repo: 'myBlogComments',
       oauth: {
@@ -701,17 +706,6 @@
       <!-- Catalog: Tabe of Content -->
       <!-- Table of Contents -->
 
-    
-      <aside id="sidebar">
-        <div id="toc" class="toc-article">
-        <strong class="toc-title">目录</strong>
-        
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">排序</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-%E5%BF%AB%E6%8E%92-%E5%B9%B3%E5%9D%87%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9AO-nlogn-%EF%BC%89"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 快排 (平均时间复杂度：O(nlogn) ）</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F-%E7%94%A8%E4%BA%8E%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E6%95%B0%E5%88%97%EF%BC%8C%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9AO-nlogn"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 归并排序 (用于合并两个有序数列，时间复杂度：O(nlogn))</span></a></li></ol></li></ol>
-        
-        </div>
-      </aside>
-    
-
 
 
       <!-- Sidebar Container -->
@@ -725,7 +719,7 @@
         <section>
           <!-- no hr -->
           <h5>
-            <a href="/tags/">特色标签</a>
+            <a href="/tags/">FEATURED TAGS</a>
           </h5>
           <div class="tags">
             
@@ -738,7 +732,7 @@
         <!-- Friends Blog -->
         
         <hr>
-        <h5>链友</h5>
+        <h5>FRIENDS</h5>
         <ul class="list-inline">
 
           
@@ -964,7 +958,7 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
             <span class="search-icon">
               <i class="fa fa-search fa-lg" style="margin: 25px 10px 25px 20px;"></i>
             </span>
-            <input autocomplete="off" placeholder="搜索..." type="text" id="local-search-input">
+            <input autocomplete="off" placeholder="SEARCH..." type="text" id="local-search-input">
           </div>
         </div>
         <div id="local-search-result"></div>
