@@ -143,10 +143,10 @@
   <!--[if lt IE 9]> <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script> <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
 
   <!-- ga & ba script hoook -->
-  <link rel="canonical" href="https://every-breaking-wave.github.io/算法/前缀和与差分/">
+  <link rel="canonical" href="https://every-breaking-wave.github.io/tags/paper-reading/">
   <title>
     
-      前缀和与差分 - breaking-wave&#39;s blog
+      breaking-wave&#39;s blog
     
   </title>
 <meta name="generator" content="Hexo 5.4.0"></head>
@@ -304,7 +304,29 @@
           <!-- LangSelect -->
           
           
-          
+          <!-- LangSelect start -->
+          <!-- LangSelect -->
+<li>
+  <a id="lang-select-label"><i class="fa fa-globe"></i>
+    <span>
+      English
+    </span>
+    <select id="lang-select" data-canonical="tags/paper-reading/index.html">
+      
+      
+      <option value="cn" >
+        简体中文
+      </option>
+      
+      <option value="en"  selected >
+        English
+      </option>
+      
+    </select>
+  </a>
+</li>
+
+          <!-- LangSelect end -->
           
           
         </ul>
@@ -356,19 +378,19 @@
     .body--light {
       /* intro-header */
       --intro-header-background-image-url-home: url('/img/header_img/hiten2.jpg');
-      --intro-header-background-image-url-post: url('/img/header_img/lml_bg.jpg');
-      --intro-header-background-image-url-page: url('//img/header_img/lml_bg.jpg');
+      --intro-header-background-image-url-post: url('');
+      --intro-header-background-image-url-page: url('/img/header_img/hiten3.jpg');
     }
     .body--dark {
       --intro-header-background-image-url-home: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/header_img/hiten2.jpg');
-      --intro-header-background-image-url-post: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/header_img/lml_bg.jpg');
-      --intro-header-background-image-url-page: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('//img/header_img/lml_bg.jpg');
+      --intro-header-background-image-url-post: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('');
+      --intro-header-background-image-url-page: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url('/img/header_img/hiten3.jpg');
     }
 
     header.intro-header {
-       /*post*/
-        background-image: var(--intro-header-background-image-url-post);
-        /* background-image: url('/img/header_img/lml_bg.jpg'); */
+       /*page*/
+        background-image: var(--intro-header-background-image-url-page);
+        /* background-image: url('/img/header_img/hiten3.jpg'); */
       
     }
 
@@ -390,42 +412,10 @@
       <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
           
-          <div class="post-heading">
-            <div class="tags">
-              
-              <a class="tag" href="/tags/#算法学习" title="算法学习">算法学习</a>
-              
-            </div>
-            <h1>前缀和与差分</h1>
-            <h2 class="subheading"></h2>
-            <span class="meta">
-              Posted by breaking-wave on
-              2022-09-18
-            </span>
-
-
-            
-            <!-- WordCount start -->
-            <div class="blank_box"></div>
-            <span class="meta">
-              Estimated Reading Time <span class="post-count">4</span> Minutes
-            </span>
-            <div class="blank_box"></div>
-            <span class="meta">
-              Words <span class="post-count">912</span> In Total
-            </span>
-            <div class="blank_box"></div>
-            <!-- WordCount end -->
-            
-            
-            <!-- 不蒜子统计 start -->
-            <span class="meta" id="busuanzi_container_page_pv">
-              Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
-            </span>
-            <!-- 不蒜子统计 end -->
-            
-
-
+          <div class="site-heading">
+            <h1>breaking-wave&#39;s coding zone</h1>
+            <!--<hr class="small">-->
+            <span class="subheading"></span>
           </div>
           
         </div>
@@ -466,349 +456,291 @@
 	Friends Blog、
 	anchorjs、
 	) -->
-		<!-- Modify by Yu-Hsuan Yen -->
-<!-- Post Content -->
-<article>
-  <div class="container">
-    <div class="row">
-      <!-- Post Container -->
-      <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
+		<!-- Main Content -->
+<div class="container">
+  <div class="row">
+    
 
-        <h2 id="前缀和问题">前缀和问题</h2>
-<p>前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用<strong>空间换时间</strong>的策略。</p>
-<ul>
-<li>一维前缀和</li>
-</ul>
-<p>$$<br>
-S[i]=a[1]+a[2]+…a[i] \\ a[l]+…+a[r]=S[r]−S[l−1]<br>
-$$</p>
-<ul>
-<li>二维前缀和</li>
-</ul>
-<p>$$<br>
-S[i, j] = 第i行j列格子左上部分所有元素的和 \\<br>
-以(x1, y1)为左上角，(x2, y2)为右下角的子矩阵的和为：\\<br>
-S[x2, y2] - S[x1 - 1, y2] - S[x2, y1 - 1] + S[x1 - 1, y1 - 1]<br>
-$$</p>
-<h2 id="一维差分问题">一维差分问题</h2>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0.png" alt=""></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//差分 时间复杂度 o(m)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N], b[N];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;a[i]);</span><br><span class="line">        b[i] = a[i] - a[i - <span class="number">1</span>];      <span class="comment">//构建差分数组</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> l, r, c;</span><br><span class="line">    <span class="keyword">while</span> (m--)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>, &amp;l, &amp;r, &amp;c);</span><br><span class="line">        b[l] += c;     <span class="comment">//将序列中[l, r]之间的每个数都加上c</span></span><br><span class="line">        b[r + <span class="number">1</span>] -= c;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        a[i] = b[i] + a[i - <span class="number">1</span>];    <span class="comment">//前缀和运算</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, a[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到我们构造了差分数组 b，且有<br>
-$$<br>
-b[n]=a[n]−a[n−1]<br>
-$$<br>
-<strong>对于b[n] 的更改会影响a[n] 从n开始的每一个值</strong>， 因此我们对a进行批量修改时，只需要更改b中对应的位置即可。</p>
-<h2 id="二维差分问题">二维差分问题</h2>
-<p>我们将问题拓展到二维来看：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e3</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N][N], b[N][N];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x1, <span class="keyword">int</span> y1, <span class="keyword">int</span> x2, <span class="keyword">int</span> y2, <span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">    b[x1][y1] += c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y1] -= c;</span><br><span class="line">    b[x1][y2 + <span class="number">1</span>] -= c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y2 + <span class="number">1</span>] += c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m, q;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m &gt;&gt; q;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">            cin &gt;&gt; a[i][j];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            <span class="built_in">insert</span>(i, j, i, j, a[i][j]);      <span class="comment">//构建差分数组</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (q--)&#123;</span><br><span class="line">        <span class="keyword">int</span> x1, y1, x2, y2, c;</span><br><span class="line">        cin &gt;&gt; x1 &gt;&gt; y1 &gt;&gt; x2 &gt;&gt; y2 &gt;&gt; c;</span><br><span class="line">        <span class="built_in">insert</span>(x1, y1, x2, y2, c);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            b[i][j] += b[i - <span class="number">1</span>][j] + b[i][j - <span class="number">1</span>] - b[i - <span class="number">1</span>][j - <span class="number">1</span>]; </span><br><span class="line">            <span class="comment">//二维前缀和，直接在b上处理，因为 a[1][1] == b[1][1]</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            cout &lt;&lt; b[i][j] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>与一维问题中不同的处理时，在初始化差分数组 b 时，我们采用了和更新 b 一样的接口 <strong>insert</strong>， 可以理解为 a 是在一个初始全为0的数组上逐个插入的，而 b 也随着 a 的插入更新。</p>
-<h3 id="局限性">局限性</h3>
-<p>差分算法看上去很方便但有不小的局限，每次对前缀和数组（a）的批量更改变成了对 差分数组（b）的常数次更改，的确减少了计算次数，但缺点在于改变的结果无法马上反应到前缀和数组上，若想得到前缀和数组中的具体的值，仍然需要借助差分数组遍历更新（在一维中这个代价是O(n)) ，可见这种算法有以下使用情景：</p>
-<ul>
-<li>对于数组有多次的，连续区间上的统一更改</li>
-</ul>
-<p>不适合：</p>
-<ul>
-<li>对数组进行少量的，非连续或不统一的更改</li>
-</ul>
+    <!-- USE SIDEBAR -->
+    <!-- Post Container -->
+    <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
 
+      <!-- Main Content -->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-0 col-md-10 col-md-offset-1">
+      <!-- 归档列表 -->
 
-        <hr>
-        <!-- Pager -->
-        <ul class="pager">
+      
+
+      <!-- 归档列表 -->
+      
+      <div class="one-tag-list">
+        <span class="fa fa-calendar-times-o listing-seperator" id="2022">
+          <span class="tag-text">2022</span>
+        </span>
+        <ul>
           
-          <li class="previous">
-            <a href="/paper/Borg paper reading/" data-toggle="tooltip" data-placement="top" title="Borg paper reading">&larr; Previous Post</a>
+          <li>
+            09-22
+            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            <a href="/paper/Borg paper reading/" style="color: #0085a1">
+              <span>
+                Borg paper reading
+                
+                -- paper
+                
+              </span>
+            </a>
           </li>
           
+          <li>
+            09-18
+            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            <a href="/算法/前缀和与差分/" style="color: #0085a1">
+              <span>
+                前缀和与差分
+                
+                -- 算法
+                
+              </span>
+            </a>
+          </li>
           
-          <li class="next">
-            <a href="/算法/简单排序算法/" data-toggle="tooltip" data-placement="top" title="简单排序算法">Next Post &rarr;</a>
+          <li>
+            09-17
+            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            <a href="/算法/简单排序算法/" style="color: #0085a1">
+              <span>
+                简单排序算法
+                
+                -- 算法
+                
+              </span>
+            </a>
+          </li>
+          
+          <li>
+            09-16
+            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            <a href="/cn/k8s上的数据持久化/" style="color: #0085a1">
+              <span>
+                k8s上的数据持久化
+                
+                -- cn
+                
+              </span>
+            </a>
+          </li>
+          
+          <li>
+            09-16
+            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            <a href="/cn/22暑期project总结/" style="color: #0085a1">
+              <span>
+                22暑期项目小结
+                
+                -- cn
+                
+              </span>
+            </a>
           </li>
           
         </ul>
-
-        
-        <!-- tip start -->
-        <!-- tip -->
-<!-- tip start -->
-<div class="tip">
-  <p>
-    
-      If you like this blog or find it useful for you, you are welcome to comment on it. You are also welcome to share this blog, so that more people can participate in it. If the images used in the blog infringe your copyright, please contact the author to delete them. Thank you !
-    
-  </p>
+      </div>
+      
+    </div>
+  </div>
 </div>
-<!-- tip end -->
 
-        <!-- tip end -->
-        
 
-        
-        <!-- Sharing Srtart -->
-        <!-- Social Social Share Post -->
-<!-- Docs:https://github.com/overtrue/share.js -->
+      <!-- 如果开启评论功能 -->
+      
+    </div>
 
-<div class="social-share" data-initialized="true" data-disabled="tencent ,douban ,qzone ,linkedin ,facebook ,google ,diandian" data-wechat-qrcode-helper="" align="center">
-  <ul class="list-inline text-center social-share-ul">
-    <li class="social-share-li">
-      <a target="_blank" class="social-share-icon icon-twitter">
-        <i class="fa fa-twitter fa-1x" aria-hidden="true"></i>
-      </a>
-    </li>
-    <li class="social-share-li">
-      <a class="social-share-icon icon-wechat">
-        <i class="fa fa-weixin fa-1x" aria-hidden="true"></i>
-      </a>
-    </li>
-    <li class="social-share-li">
-      <a target="_blank" class="social-share-icon icon-weibo">
-        <i class="fa fa-weibo fa-1x" aria-hidden="true"></i>
-      </a>
-    </li>
-    <li class="social-share-li">
-      <a target="_blank" class="social-share-icon icon-qq">
-        <i class="fa fa-qq fa-1x" aria-hidden="true"></i>
-      </a>
-    </li>
-    <li class="social-share-li">
-      <a target="_blank" class="social-share-icon" href="mailto:?subject=前缀和与差分&body=Hi,I found this website and thought you might like it https://every-breaking-wave.github.io/算法/前缀和与差分/">
-        <i class="fa fa-envelope fa-1x" aria-hidden="true"></i>
-      </a>
-    </li>
+    <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        <!-- Visitors -->
+<h5><a href="/">VISITORS</a></h5>
+
+<div class="widget">
+  <span>
+    Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
+  </span>
+  <br />
+  <span>
+    <b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
+  </span>
+</div>
+
+
+        <hr>
+    
+        <!-- Featured Tags -->
+
+<section>
+  <h5><a href="/tags/">FEATURED TAGS</a></h5>
+  <div class="tags">
+    
+    
+    <a href="/tags/#经验总结" title="经验总结" rel="2">经验总结</a>
+    
+    
+    
+    <a href="/tags/#算法学习" title="算法学习" rel="2">算法学习</a>
+    
+    
+    
+    <a href="/tags/#paper reading" title="paper reading" rel="1">paper reading</a>
+    
+    
+  </div>
+</section>
+
+
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+  <h5><a href="/about/">ABOUT ME</a></h5>
+  <div class="short-about">
+
+    
+    <img id="avatar_pic" src="/img/avatar/me.jpg" alt="avatar_pic" style="box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, .5);" />
+    
+
+    
+    <p>Maybe you have interest in FGO ?</p>
+    
+
+    <!-- SNS Link -->
+    <ul class="list-inline">
+      
+
+      
+      <li>
+        <a target="_blank" href="https://github.com/every-breaking-wave">
+          <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+          </span>
+        </a>
+      </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+    </ul>
+  </div>
+</section>
+
+        <hr>
+    
+        <!-- RECENT POSTS -->
+
+<h5><a href="/">RECENT POSTS</a></h5>
+<div class="widget">
+  <ul>
+    
+    <a href="../../paper/Borg%20paper%20reading/">
+      <li>Borg paper reading</li>
+    </a>
+    
+    <a href="../../%E7%AE%97%E6%B3%95/%E5%89%8D%E7%BC%80%E5%92%8C%E4%B8%8E%E5%B7%AE%E5%88%86/">
+      <li>前缀和与差分</li>
+    </a>
+    
+    <a href="../../%E7%AE%97%E6%B3%95/%E7%AE%80%E5%8D%95%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+      <li>简单排序算法</li>
+    </a>
+    
+    <a href="../../cn/k8s%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/">
+      <li>k8s上的数据持久化</li>
+    </a>
+    
+    <a href="../../cn/22%E6%9A%91%E6%9C%9Fproject%E6%80%BB%E7%BB%93/">
+      <li>22暑期项目小结</li>
+    </a>
+    
   </ul>
 </div>
 
-<!-- css & js -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css"> -->
-<script defer="defer" async="true" src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
 
-        <!-- Sharing End -->
-        
         <hr>
-
-        <!-- comments start -->
-        <!-- 1. gitalk comment -->
-
-  <!-- gitalk start -->
-  <!-- Docs:https://github.com/gitalk/gitalk/blob/master/readme-cn.md -->
-
-  <div id="gitalk-container"></div>
-
-  
-    <!-- <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.js"></script> -->
-    <script src="/js/comment/gitalk.js"></script>
-  
-
-  <script>
-    var gitalk = new Gitalk({
-      clientID: '6086010cb816e9c9638d',
-      clientSecret: 'dcc632955f70d7d10683adf90e411e0b81b535d7',
-      repo: 'myBlogComments',
-      owner: 'every-breaking-wave',
-      admin: 'every-breaking-wave ',
-      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // Ensure uniqueness and length less than 50
-      distractionFreeMode: false, // Facebook-like distraction free mode
-      perPage: 10,
-      pagerDirection: 'last',
-      createIssueManually: false,
-      language: 'en',
-      proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
-    });
-    gitalk.render('gitalk-container');
-
-    var gtFolded = () => {
-      setTimeout(function () {
-        let markdownBody = document.getElementsByClassName("markdown-body");
-        let list = Array.from(markdownBody);
-        list.forEach(item => {
-          if (item.clientHeight > 250) {
-            item.classList.add('gt-comment-body-folded');
-            item.style.maxHeight = '250px';
-            item.title = 'Click to Expand';
-            item.onclick = function () {
-              item.classList.remove('gt-comment-body-folded');
-              item.style.maxHeight = '';
-              item.title = '';
-              item.onclick = null;
-            };
-          }
-        })
-      }, 800);
-    }
-  </script>
-
-  <!-- gitalk end -->
-
-
-<!-- 2. gitment comment -->
-
-  <!-- gitment start -->
-  <!-- Docs:https://github.com/imsun/gitment -->
-
-  <div id="blog_comments"></div>
-  <!-- <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css"> <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> -->
-
-  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitment.browser.js"></script>
-
-  <script>
-    const myTheme = {
-      render(state, instance) {
-        const container = document.createElement('div')
-        container.lang = "en-US"
-        container.className = 'gitment-container gitment-root-container'
-
-        // your custom component
-        container.appendChild(instance.renderSomething(state, instance))
-        container.appendChild(instance.renderHeader(state, instance))
-        container.appendChild(instance.renderEditor(state, instance))
-        container.appendChild(instance.renderComments(state, instance))
-        container.appendChild(instance.renderFooter(state, instance))
-        return container
-      },
-      renderSomething(state, instance) {
-        const container = document.createElement('div')
-        container.lang = "en-US"
-        container.className = 'hello_visitor'
-        if (state.user.login) {
-          container.innerText = `Hello ${state.user.login}, Welcome to comment system`
-        }
-        return container
-      }
-    }
-
-    const gitment = new Gitment({
-      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // optional
-      owner: 'every-breaking-wave',
-      repo: 'myBlogComments',
-      oauth: {
-        client_id: '',
-        client_secret: ''
-      },
-      desc: '',
-      perPage: '10',
-      maxCommentHeight: '250',
-      theme: myTheme,
-      // ... For more available options, check out the documentation below
-    })
-
-    gitment.render('blog_comments')
-    // or gitment.render(document.getElementById('comments')) or document.body.appendChild(gitment.render())
-  </script>
-
-  <!-- gitment end -->
-
-
-<!-- 3. disqus comment -->
-
-
-        <!-- comments end -->
-        <hr>
-
-      </div>
-
-      <!-- Catalog: Tabe of Content -->
-      <!-- Table of Contents -->
-
     
-      <aside id="sidebar">
-        <div id="toc" class="toc-article">
-        <strong class="toc-title">Contents</strong>
-        
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%89%8D%E7%BC%80%E5%92%8C%E9%97%AE%E9%A2%98"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前缀和问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%BB%B4%E5%B7%AE%E5%88%86%E9%97%AE%E9%A2%98"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">一维差分问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BA%8C%E7%BB%B4%E5%B7%AE%E5%88%86%E9%97%AE%E9%A2%98"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">二维差分问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">局限性</span></a></li></ol></li></ol>
-        
-        </div>
-      </aside>
-    
-
-
-
-      <!-- Sidebar Container -->
-      <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-        <!-- Featured Tags -->
-        
-        <section>
-          <!-- no hr -->
-          <h5>
-            <a href="/tags/">FEATURED TAGS</a>
-          </h5>
-          <div class="tags">
-            
-            <a class="tag" href="/tags/#算法学习" title="算法学习">算法学习</a>
-            
-          </div>
-        </section>
-        
-
         <!-- Friends Blog -->
-        
+
+<h5><a href="/">FRIENDS</a></h5>
+<ul class="list-inline">
+  
+  <li><a href="https://lulu010722.cn/" target="_blank">天宇哥</a></li>
+  
+</ul>
+
+
         <hr>
-        <h5>FRIENDS</h5>
-        <ul class="list-inline">
+    
+        <!-- Archives -->
 
-          
-          <li>
-            <a href="https://lulu010722.cn/" target="_blank">天宇哥</a>
-          </li>
-          
-        </ul>
-        
-      </div>
-    </div>
+<h5><a href="/archives/">archives</a></h5>
+<div class="widget">
+  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
+</div>
+
+
+        <hr>
+    
+        <!-- Categories -->
+
+<h5><a href="/categories/">categories</a></h5>
+<div class="widget">
+  <ul>
+    
+    <a href="/categories/#算法">
+      <li>算法</li>
+    </a>
+    
+    <a href="/categories/#集群开发">
+      <li>集群开发</li>
+    </a>
+    
+  </ul>
+</div>
+
+
+        <hr>
+    
+</div>
+
+
+    
   </div>
-</article>
-
-
-
-<!-- anchorjs start -->
-<!-- async load function -->
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script type="text/javascript">
-  // async load function
-  function async (u, c) {
-    var d = document,
-      t = 'script',
-      o = d.createElement(t),
-      s = d.getElementsByTagName(t)[0];
-    o.src = u;
-    if (c) {
-      o.addEventListener('load', function(e) {
-        c(null, e);
-      }, false);
-    }
-    s.parentNode.insertBefore(o, s);
-  };
-</script>
-<script type="text/javascript">
-  //anchor-js, Doc:http://bryanbraun.github.io/anchorjs/
-  async ("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js", function() {
-    anchors.options = {
-      visible: 'hover',
-      placement: 'left',
-      // icon: 'ℬ'
-      icon: '❡'
-    };
-    anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-  });
-</script>
-<style>
-  /* place left on bigger screen */
-  @media all and (min-width: 800px) {
-    .anchorjs-link {
-      position: absolute;
-      left: -0.75em;
-      font-size: 1.1em;
-      margin-top: -0.1em;
-    }
-  }
-</style>
-
-<!-- anchorjs end -->
-
+</div>
 
 
 		<!-- Footer (contains ThemeColor、viewer) -->

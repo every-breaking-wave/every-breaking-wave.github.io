@@ -143,10 +143,10 @@
   <!--[if lt IE 9]> <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script> <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
 
   <!-- ga & ba script hoook -->
-  <link rel="canonical" href="https://every-breaking-wave.github.io/算法/前缀和与差分/">
+  <link rel="canonical" href="https://every-breaking-wave.github.io/paper/Borg paper reading/">
   <title>
     
-      前缀和与差分 - breaking-wave&#39;s blog
+      Borg paper reading - breaking-wave&#39;s blog
     
   </title>
 <meta name="generator" content="Hexo 5.4.0"></head>
@@ -393,14 +393,14 @@
           <div class="post-heading">
             <div class="tags">
               
-              <a class="tag" href="/tags/#算法学习" title="算法学习">算法学习</a>
+              <a class="tag" href="/tags/#paper reading" title="paper reading">paper reading</a>
               
             </div>
-            <h1>前缀和与差分</h1>
+            <h1>Borg paper reading</h1>
             <h2 class="subheading"></h2>
             <span class="meta">
               Posted by breaking-wave on
-              2022-09-18
+              2022-09-22
             </span>
 
 
@@ -408,11 +408,11 @@
             <!-- WordCount start -->
             <div class="blank_box"></div>
             <span class="meta">
-              Estimated Reading Time <span class="post-count">4</span> Minutes
+              Estimated Reading Time <span class="post-count">8</span> Minutes
             </span>
             <div class="blank_box"></div>
             <span class="meta">
-              Words <span class="post-count">912</span> In Total
+              Words <span class="post-count">2.6k</span> In Total
             </span>
             <div class="blank_box"></div>
             <!-- WordCount end -->
@@ -474,42 +474,125 @@
       <!-- Post Container -->
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
-        <h2 id="前缀和问题">前缀和问题</h2>
-<p>前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用<strong>空间换时间</strong>的策略。</p>
+        <p>Borg 系统是Google广泛使用的一个集群管理器，有着&quot;kubernetes的前身&quot;之称，本文介绍了Borg的架构和许多特性。</p>
+<p>Borg的主要优点：</p>
 <ul>
-<li>一维前缀和</li>
+<li>隐藏资源管理和故障处理的详细信息，以便其用户可以专注于应用程序开发；</li>
+<li>具有很高的可靠性和可用性，并支持相同的应用；</li>
+<li>让我们有效地在成千上万的计算机上运行工作负载。</li>
 </ul>
-<p>$$<br>
-S[i]=a[1]+a[2]+…a[i] \\ a[l]+…+a[r]=S[r]−S[l−1]<br>
-$$</p>
+<h2 id="From-User’s-Perspective">From User’s Perspective</h2>
+<h3 id="工作负载">工作负载</h3>
+<p>工作负载主要分为两类：</p>
 <ul>
-<li>二维前缀和</li>
+<li>长期运行的服务
+<ul>
+<li>对性能波动非常敏感，直接面向end-user</li>
 </ul>
-<p>$$<br>
-S[i, j] = 第i行j列格子左上部分所有元素的和 \\<br>
-以(x1, y1)为左上角，(x2, y2)为右下角的子矩阵的和为：\\<br>
-S[x2, y2] - S[x1 - 1, y2] - S[x2, y1 - 1] + S[x1 - 1, y1 - 1]<br>
-$$</p>
-<h2 id="一维差分问题">一维差分问题</h2>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0.png" alt=""></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//差分 时间复杂度 o(m)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N], b[N];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;a[i]);</span><br><span class="line">        b[i] = a[i] - a[i - <span class="number">1</span>];      <span class="comment">//构建差分数组</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> l, r, c;</span><br><span class="line">    <span class="keyword">while</span> (m--)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>, &amp;l, &amp;r, &amp;c);</span><br><span class="line">        b[l] += c;     <span class="comment">//将序列中[l, r]之间的每个数都加上c</span></span><br><span class="line">        b[r + <span class="number">1</span>] -= c;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        a[i] = b[i] + a[i - <span class="number">1</span>];    <span class="comment">//前缀和运算</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, a[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到我们构造了差分数组 b，且有<br>
-$$<br>
-b[n]=a[n]−a[n−1]<br>
-$$<br>
-<strong>对于b[n] 的更改会影响a[n] 从n开始的每一个值</strong>， 因此我们对a进行批量修改时，只需要更改b中对应的位置即可。</p>
-<h2 id="二维差分问题">二维差分问题</h2>
-<p>我们将问题拓展到二维来看：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e3</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N][N], b[N][N];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x1, <span class="keyword">int</span> y1, <span class="keyword">int</span> x2, <span class="keyword">int</span> y2, <span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">    b[x1][y1] += c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y1] -= c;</span><br><span class="line">    b[x1][y2 + <span class="number">1</span>] -= c;</span><br><span class="line">    b[x2 + <span class="number">1</span>][y2 + <span class="number">1</span>] += c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m, q;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m &gt;&gt; q;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">            cin &gt;&gt; a[i][j];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            <span class="built_in">insert</span>(i, j, i, j, a[i][j]);      <span class="comment">//构建差分数组</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (q--)&#123;</span><br><span class="line">        <span class="keyword">int</span> x1, y1, x2, y2, c;</span><br><span class="line">        cin &gt;&gt; x1 &gt;&gt; y1 &gt;&gt; x2 &gt;&gt; y2 &gt;&gt; c;</span><br><span class="line">        <span class="built_in">insert</span>(x1, y1, x2, y2, c);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            b[i][j] += b[i - <span class="number">1</span>][j] + b[i][j - <span class="number">1</span>] - b[i - <span class="number">1</span>][j - <span class="number">1</span>]; </span><br><span class="line">            <span class="comment">//二维前缀和，直接在b上处理，因为 a[1][1] == b[1][1]</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)&#123;</span><br><span class="line">            cout &lt;&lt; b[i][j] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>与一维问题中不同的处理时，在初始化差分数组 b 时，我们采用了和更新 b 一样的接口 <strong>insert</strong>， 可以理解为 a 是在一个初始全为0的数组上逐个插入的，而 b 也随着 a 的插入更新。</p>
-<h3 id="局限性">局限性</h3>
-<p>差分算法看上去很方便但有不小的局限，每次对前缀和数组（a）的批量更改变成了对 差分数组（b）的常数次更改，的确减少了计算次数，但缺点在于改变的结果无法马上反应到前缀和数组上，若想得到前缀和数组中的具体的值，仍然需要借助差分数组遍历更新（在一维中这个代价是O(n)) ，可见这种算法有以下使用情景：</p>
+</li>
+<li>批处理作业
 <ul>
-<li>对于数组有多次的，连续区间上的统一更改</li>
+<li>耗时较长，对性能波动敏感低</li>
 </ul>
-<p>不适合：</p>
+</li>
+</ul>
+<p>优先级高的borg job被称为prob，反之为non-prob, 大多数prob为长期运行服务，non-prob多为批处理作业。</p>
+<p>用户通过向Borg发出远程过程调用（<strong>RPC</strong>）（通常是从命令行工具，其他Borg作业或我们的监视系统）来对作业进行操作。</p>
+<h3 id="优先级，配额与准入控制">优先级，配额与准入控制</h3>
+<p>Borg通过为作业分配优先级解决工作量超过容量的问题。 高优先级任务可以以低优先级任务为代价获得资源，即使这涉及抢占（杀死）后者。</p>
+<p>配额用于决定允许哪些作业进行调度。 配额表示为一段时间（通常为几个月）内给定优先级的资源数量（CPU，RAM，磁盘等）的向量。 数量指定了用户的作业请求一次可以请求的最大资源量（例如，“从现在到7月底，单元xx中的产品优先级为20 TiB RAM”）。 配额检查是准入控制的一部分，而不是计划的一部分：配额不足的作业在提交后将立即被拒绝。这也说明，配额实在Borg之外进行的，取决于物理条件等。</p>
+<h3 id="命名与监控">命名与监控</h3>
+<p>为了找到创建和放置的任务，Borg为每个任务创建了一个稳定的“ Borg名称服务”（BNS）名称，其中包括单元名称，作业名称和任务编号。</p>
+<p>几乎在Borg下运行的每个任务都包含一个内置的HTTP服务器，该服务器发布有关任务运行状况和成千上万个性能指标（例如RPC延迟）的信息。 Borg监视运行状况检查URL，并重新启动无法及时响应或返回HTTP错误代码的任务。监视工具可跟踪其他数据，以用于仪表板并针对违反服务水平目标（SLO）的情况发出警报。</p>
+<h2 id="Borg架构">Borg架构</h2>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20220922015541559.png" alt="image-20220922015541559" style="zoom: 50%;" />
+<p>一个Borg单元由一组计算机，一个逻辑上集中的控制器（称为Borgmaster）和一个称为Borglet的代理进程组成，该进程在该单元中的每台计算机上运行。</p>
+<h3 id="Borg-master">Borg master</h3>
+<p>每个单元的Borgmaster包含<strong>两个</strong>进程：Borgmaster主进程和一个单独的调度程序（Scheduling）。 Borgmaster主进程处理客户端RPC，这些RPC会改变状态（例如，创建作业）或提供对数据的只读访问权限（例如，查找作业）。它还为系统中的所有对象（机器，任务，分配等）管理状态机，与Borglets通信，并提供Web UI作为Sigma(类似Dashboard的Web UI)的备份。</p>
+<h3 id="Scheduling">Scheduling</h3>
+<p>提交作业后，Borgmaster将其持久地记录在Paxos Store中，并将该作业的任务添加到等待队列中。 调度程序会对此进行异步扫描，如果有足够的可用资源满足任务的约束，调度程序会将任务分配给计算机。 （调度程序主要在任务(Task)而不是作业(Job)上运行）。</p>
+<p>Scheduling 进程对worker机器进行“打分”并为他们分配适合的任务，打分本身是一个开销很大的过程。</p>
+<h3 id="Scalability">Scalability</h3>
+<p>Borg在提高Scalability方面做的事：</p>
 <ul>
-<li>对数组进行少量的，非连续或不统一的更改</li>
+<li>分数缓存：评估可行性并为机器评分是昂贵的，因此Borg会缓存分数，直到机器的属性或任务发生变化。</li>
+<li>等价类：Borg不会对每台机器上的每个待处理任务进行挖掘可行性，并为所有可行的机器评分，Borg只对每个等价项进行可行性和评分类–一组具有相同要求的任务。</li>
+<li>宽松的随机化：计算大型单元中所有计算机的可行性和分数是浪费的，因此调度程序以随机顺序检查计算机，直到找到“足够”可行的计算机进行评分，然后在其中选择最佳计算机放。</li>
+</ul>
+<h3 id="Availability">Availability</h3>
+<p>可用性方面：</p>
+<ul>
+<li>如有必要，可在新的机器上自动重新安排已撤消的任务；</li>
+<li>通过在不同的故障域（例如机器，机架和电源域）中分散作业的任务，减少相关的故障；</li>
+<li>限制允许的任务中断率和作业中可以在维护活动（例如OS或机器升级）中同时关闭的任务数量；</li>
+<li>使用声明性的期望状态表示和等效的等效更改操作，以便失败的客户端可以无害地重新提交任何被遗忘的请求；</li>
+<li>对无法访问的计算机寻找新位置的速率限制，因为它无法区分大规模计算机故障和网络分区；</li>
+<li>避免重复任务：导致任务或机器崩溃的机器配对；</li>
+<li>通过反复重新运行logsaver任务来恢复写入本地磁盘的关键中间数据，即使已将附加到它的分配终止或移动到另一台计算机也是如此。用户可以设置系统尝试运行多长时间；通常几天。</li>
+</ul>
+<h3 id="Utilization">Utilization</h3>
+<p>资源利用率方面：</p>
+<ul>
+<li>Cell sharing（单元共享）
+<ul>
+<li>机器都同时执行生产任务和非生产任务</li>
+</ul>
+</li>
+<li>Large cells
+<ul>
+<li>建立大型单元，既可以运行大型计算，又可以减少资源碎片。</li>
+</ul>
+</li>
+<li>Fine-grained resource requests（细粒度的资源请求）
+<ul>
+<li>Borg用户以毫核心为单位请求CPU，以字节为单位请求内存和磁盘空间。</li>
+</ul>
+</li>
+<li>Resource reclamation（资源回收）</li>
+<li>Isolation
+<ul>
+<li>安全隔离：使用Linux chroot jail作为同一台计算机上多个任务之间的主要安全隔离机制；在作为Borg任务运行的KVM进程中运行每个托管的VM</li>
+<li>性能隔离：所有Borg任务都在基于Linux cgroup的资源容器中运行，并且Borglet操纵容器设置；LS任务保留整个物理CPU内核</li>
+</ul>
+</li>
+</ul>
+<h2 id="经验教训">经验教训</h2>
+<h3 id="The-Bad">The Bad</h3>
+<ul>
+<li>作业是唯一限制任务的分组机制
+<ul>
+<li>Borg没有一流的方法来将整个多职位服务作为单个实体进行管理，也无法引用服务的相关实例（例如，金丝雀canary和生产轨道production tracks）</li>
+</ul>
+</li>
+<li>每台机器上的任务使用同一个IP地址会使事情变得复杂。
+<ul>
+<li>Borg必须安排端口作为资源；任务必须预先声明它们需要多少个端口，并愿意在启动时被告知要使用哪些端口；Borglet必须强制执行端口隔离；并且命名和RPC系统必须处理端口以及IP地址。</li>
+</ul>
+</li>
+<li>针对高级用户提供了大量可微调程序的API
+<ul>
+<li>使“休闲”用户的工作变得更加困难</li>
+</ul>
+</li>
+</ul>
+<h3 id="The-Good">The Good</h3>
+<ul>
+<li>分配是有用的</li>
+<li>集群管理不仅仅是任务管理
+<ul>
+<li>其他好处：命名和负载平衡</li>
+</ul>
+</li>
+<li>主机是分布式系统的内核</li>
+</ul>
+<h2 id="关于-K8S">关于 K8S</h2>
+<ul>
+<li>为了避免此类困难（指<strong>作业是唯一限制任务的分组机制</strong>），Kubernetes拒绝job notion，而是使用label（arbitrary key/value pairs）来组织其调度单位（pod）。可以通过将job：jobname标签附加到一组pod来实现等效的Borg job，但是也可以表示任何其他有用的分组，例如service，tier或release-ty[e（例如，production，staging，test）。 Kubernetes中的操作通过标签查询来标识其目标，标签查询选择操作应应用于的对象。这种方法比作业的单个固定分组具有更大的灵活性。</li>
+<li>由于Linux名称空间，VM，IPv6和软件定义的网络的出现，Kubernetes可以采用一种更加用户友好的方法来消除这些复杂性：每个pod和服务都有其自己的IP地址，从而允许开发人员选择端口而不是选择端口。要求其软件适应基础架构选择的软件，并消除管理端口的基础架构复杂性。</li>
+<li>Kubernetes相当于alloc的是pod，pod是一个或多个容器的资源包络，这些容器总是被调度到同一台机器上并且可以共享资源。 Kubernetes在同一个pod中使用辅助容器而不是在alloc中使用任务，但是想法是相同的。</li>
+<li>Kubernetes使用服务抽象支持命名和负载平衡：服务具有名称和由标签选择器定义的动态Pod集。群集中的任何容器都可以使用服务名称连接到服务。在幕后，Kubernetes会自动在与标签选择器匹配的Pod之间对与服务的连接进行负载平衡，并跟踪Pod在哪里运行，因为它们由于故障而随着时间重新安排。</li>
+<li>Kubernetes旨在复制Borg的许多自省技术。例如，它附带了诸如cAdvisor之类的工具，用于资源监视以及基于Elasticsearch / Kibana和Fluentd的日志聚合。可以查询主对象以获取其对象状态的快照。 Kubernetes具有统一的机制，所有组件都可以使用该机制来记录可供客户端使用的事件（例如，计划中的Pod，容器发生故障）。</li>
+<li>在“主机是分布式系统的内核”上，Kubernetes架构更进一步：它的核心是一个<strong>API服务器</strong>，该API服务器仅负责处理请求和处理底层状态对象。集群管理逻辑构建为小型、可组合的微服务，这些微服务是此API服务器的客户端，例如复制控制器（replication controller），该控制器在出现故障时可维护所需数量的Pod副本，以及节点控制器（node controller)，它管理机器的生命周期。</li>
 </ul>
 
 
@@ -517,13 +600,9 @@ $$<br>
         <!-- Pager -->
         <ul class="pager">
           
-          <li class="previous">
-            <a href="/paper/Borg paper reading/" data-toggle="tooltip" data-placement="top" title="Borg paper reading">&larr; Previous Post</a>
-          </li>
-          
           
           <li class="next">
-            <a href="/算法/简单排序算法/" data-toggle="tooltip" data-placement="top" title="简单排序算法">Next Post &rarr;</a>
+            <a href="/算法/前缀和与差分/" data-toggle="tooltip" data-placement="top" title="前缀和与差分">Next Post &rarr;</a>
           </li>
           
         </ul>
@@ -572,7 +651,7 @@ $$<br>
       </a>
     </li>
     <li class="social-share-li">
-      <a target="_blank" class="social-share-icon" href="mailto:?subject=前缀和与差分&body=Hi,I found this website and thought you might like it https://every-breaking-wave.github.io/算法/前缀和与差分/">
+      <a target="_blank" class="social-share-icon" href="mailto:?subject=Borg paper reading&body=Hi,I found this website and thought you might like it https://every-breaking-wave.github.io/paper/Borg paper reading/">
         <i class="fa fa-envelope fa-1x" aria-hidden="true"></i>
       </a>
     </li>
@@ -607,7 +686,7 @@ $$<br>
       repo: 'myBlogComments',
       owner: 'every-breaking-wave',
       admin: 'every-breaking-wave ',
-      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // Ensure uniqueness and length less than 50
+      id: 'Thu Sep 22 2022 01:50:05 GMT+0800', // Ensure uniqueness and length less than 50
       distractionFreeMode: false, // Facebook-like distraction free mode
       perPage: 10,
       pagerDirection: 'last',
@@ -678,7 +757,7 @@ $$<br>
     }
 
     const gitment = new Gitment({
-      id: 'Sun Sep 18 2022 15:20:23 GMT+0800', // optional
+      id: 'Thu Sep 22 2022 01:50:05 GMT+0800', // optional
       owner: 'every-breaking-wave',
       repo: 'myBlogComments',
       oauth: {
@@ -715,7 +794,7 @@ $$<br>
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%89%8D%E7%BC%80%E5%92%8C%E9%97%AE%E9%A2%98"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前缀和问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%BB%B4%E5%B7%AE%E5%88%86%E9%97%AE%E9%A2%98"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">一维差分问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BA%8C%E7%BB%B4%E5%B7%AE%E5%88%86%E9%97%AE%E9%A2%98"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">二维差分问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">局限性</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#From-User%E2%80%99s-Perspective"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">From User’s Perspective</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B7%A5%E4%BD%9C%E8%B4%9F%E8%BD%BD"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">工作负载</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%8C%E9%85%8D%E9%A2%9D%E4%B8%8E%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">优先级，配额与准入控制</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%91%BD%E5%90%8D%E4%B8%8E%E7%9B%91%E6%8E%A7"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">命名与监控</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Borg%E6%9E%B6%E6%9E%84"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Borg架构</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Borg-master"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Borg master</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Scheduling"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Scheduling</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Scalability"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">Scalability</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Availability"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">Availability</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Utilization"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">Utilization</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BB%8F%E9%AA%8C%E6%95%99%E8%AE%AD"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">经验教训</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#The-Bad"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">The Bad</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#The-Good"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">The Good</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%85%B3%E4%BA%8E-K8S"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">关于 K8S</span></a></li></ol>
         
         </div>
       </aside>
@@ -738,7 +817,7 @@ $$<br>
           </h5>
           <div class="tags">
             
-            <a class="tag" href="/tags/#算法学习" title="算法学习">算法学习</a>
+            <a class="tag" href="/tags/#paper reading" title="paper reading">paper reading</a>
             
           </div>
         </section>
