@@ -122,11 +122,6 @@
     
 
     
-      <!-- gitalk start -->
-      <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"> -->
-      <link rel="stylesheet" href="/css/gitalk.css"/>
-      <!-- gitalk end -->
-    
   
 
   <!-- Custom Fonts -->
@@ -262,17 +257,6 @@
           
           
           <li>
-            <a href="/categories/">
-              
-              CATEGORIES
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
             <a href="/archive/">
               
               ARCHIVES
@@ -287,6 +271,17 @@
             <a href="/tags/">
               
               TAGS
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/categories/">
+              
+              CATEGORIES
               
               
             </a>
@@ -490,15 +485,14 @@
       
     </h3>
     <div class="post-content-preview">
-      Borg 系统是Google广泛使用的一个集群管理器，有着&quot;kubernetes的前身&quot;之称，本文介绍了Borg的架构和许多特性。
+      Borg 系统是Google广泛使用的一个集群管理器，有着”kubernetes的前身”之称，本文介绍了Borg的架构和许多特性。
 Borg的主要优点：
 
 隐藏资源管理和故障处理的详细信息，以便其用户可以专注于应用程序开发；
 具有很高的可靠性和可用性，并支持相同的应用；
 让我们有效地在成千上万的计算机上运行工作负载。
 
-From User’s Perspective
-工作......
+From User’s Perspective工作负载工作负载主要分为两......
     </div>
   </a>
   
@@ -531,19 +525,16 @@ From User’s Perspective
       
     </h3>
     <div class="post-content-preview">
-      前缀和问题
-前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用空间换时间的策略。
+      前缀和问题前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用空间换时间的策略。
 
 一维前缀和
 
-$$
-S[i]=a[1]+a[2]+…a[i] \\ a[l]+…+a[r]=S[r]−S[l−1]
-$$
 
+S[i]=a[1]+a[2]+...a[i] \\\\ a[l]+...+a[r]=S[r]−S[l−1]
 二维前缀和
 
-$$
-S[i, j] = 第i行j列格子左上部分所有元素的......
+
+S[i, j] = 第i行j列格子左上部分所有元素的和 \......
     </div>
   </a>
   
@@ -576,14 +567,12 @@ S[i, j] = 第i行j列格子左上部分所有元素的......
       
     </h3>
     <div class="post-content-preview">
-      排序
-稳定的排序指相同大小的数排完之后顺序不变
+      排序稳定的排序指相同大小的数排完之后顺序不变
 
 快排不稳定
 归并排序稳定
 
 1. 快排 (平均时间复杂度：O(nlogn) ）
-
 确定分界点 ： q[l], q[l + r /2 ], q[r] 均可， 对于有一定顺序的选择 l + r / 2
 调整区间： 使左边所有数均小于x，右边所有数大于x （key step)
 递归处理左右两端
@@ -591,7 +580,7 @@ S[i, j] = 第i行j列格子左上部分所有元素的......
 调整方式：双指针法
 
 左右两个指针指向数组首位
-对于......
+对于左指......
     </div>
   </a>
   
@@ -624,14 +613,11 @@ S[i, j] = 第i行j列格子左上部分所有元素的......
       
     </h3>
     <div class="post-content-preview">
-      NFS
-PV和PVC
-
-
+      NFSPV和PVC
 PV：
 持久卷（PersistentVolume）简称PV，是集群中的一块存储，可以由管理员事先供应。 可以配置NFS、Ceph等常用存储配置，相对于volumes，提供了更多的功能，如生命周期管理、大小的限制。 PV 卷的供应有两种方式：静态供应或动态供应。
 静态： 集群管理员预先创建许多PV，在PV的定义中能够体现存储资源的特性。
-动态： 集群管理员无须预先创建......
+动态： 集群管理员无须预先创建PV，......
     </div>
   </a>
   
@@ -664,9 +650,7 @@ PV：
       
     </h3>
     <div class="post-content-preview">
-      前端
-Web 前端
-技术栈：
+      前端Web 前端技术栈：
 
 语言： JSX+ HTML+CSS
 框架： React
@@ -674,8 +658,7 @@ Web 前端
 请求方式： Fetch
 服务器：nginx
 
-App 前端
-技术栈：
+App 前端技术栈：
 
 语言： JavaScript + HTML+CSS
 框架： React Native
@@ -684,7 +667,7 @@ App 前端
 存储：localStorage
 请求方式： Fetch
 
-后端......
+后端Jav......
     </div>
   </a>
   
@@ -929,7 +912,7 @@ App 前端
         <p class="copyright text-muted">
           Copyright &copy;
           breaking-wave
-          2022
+          2023
           <br>
           Theme by
           <a target="_blank" rel="noopener" href="http://beantech.org">BeanTech</a>
@@ -1368,20 +1351,5 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+	</body>
 </html>
