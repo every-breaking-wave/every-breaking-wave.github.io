@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              ABOUT
+              CATEGORIES
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/tags/">
+            <a href="/about/">
               
-              TAGS
+              ABOUT
               
               
             </a>
@@ -279,9 +279,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/tags/">
               
-              CATEGORIES
+              TAGS
               
               
             </a>
@@ -477,6 +477,40 @@
   <!-- top end -->
   
 
+  <a href="/cn/微内核上的容器实现/">
+    <h2 class="post-title">
+      微内核容器实现
+    </h2>
+    <h3 class="post-subtitle">
+      
+    </h3>
+    <div class="post-content-preview">
+      11
+...
+    </div>
+  </a>
+  
+  <p class="post-meta" style="margin: 10px 0;">
+    Posted by breaking-wave on
+    2023-10-17
+  </p>
+  <div class="tags">
+    
+    <a href="/tags/#经验总结" title="经验总结">经验总结</a>
+    
+  </div>
+  
+
+</div>
+<hr>
+
+<div class="post-preview">
+  
+  <!-- top start (article top hot config) -->
+  
+  <!-- top end -->
+  
+
   <a href="/paper/Borg paper reading/">
     <h2 class="post-title">
       Borg paper reading
@@ -485,14 +519,15 @@
       
     </h3>
     <div class="post-content-preview">
-      Borg 系统是Google广泛使用的一个集群管理器，有着”kubernetes的前身”之称，本文介绍了Borg的架构和许多特性。
+      Borg 系统是Google广泛使用的一个集群管理器，有着&quot;kubernetes的前身&quot;之称，本文介绍了Borg的架构和许多特性。
 Borg的主要优点：
 
 隐藏资源管理和故障处理的详细信息，以便其用户可以专注于应用程序开发；
 具有很高的可靠性和可用性，并支持相同的应用；
 让我们有效地在成千上万的计算机上运行工作负载。
 
-From User’s Perspective工作负载工作负载主要分为两......
+From User’s Perspective
+工作......
     </div>
   </a>
   
@@ -525,16 +560,19 @@ From User’s Perspective工作负载工作负载主要分为两......
       
     </h3>
     <div class="post-content-preview">
-      前缀和问题前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用空间换时间的策略。
+      前缀和问题
+前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用空间换时间的策略。
 
 一维前缀和
 
+$$
+S[i]=a[1]+a[2]+…a[i] \\ a[l]+…+a[r]=S[r]−S[l−1]
+$$
 
-S[i]=a[1]+a[2]+...a[i] \\\\ a[l]+...+a[r]=S[r]−S[l−1]
 二维前缀和
 
-
-S[i, j] = 第i行j列格子左上部分所有元素的和 \......
+$$
+S[i, j] = 第i行j列格子左上部分所有元素的......
     </div>
   </a>
   
@@ -567,12 +605,14 @@ S[i, j] = 第i行j列格子左上部分所有元素的和 \......
       
     </h3>
     <div class="post-content-preview">
-      排序稳定的排序指相同大小的数排完之后顺序不变
+      排序
+稳定的排序指相同大小的数排完之后顺序不变
 
 快排不稳定
 归并排序稳定
 
 1. 快排 (平均时间复杂度：O(nlogn) ）
+
 确定分界点 ： q[l], q[l + r /2 ], q[r] 均可， 对于有一定顺序的选择 l + r / 2
 调整区间： 使左边所有数均小于x，右边所有数大于x （key step)
 递归处理左右两端
@@ -580,7 +620,7 @@ S[i, j] = 第i行j列格子左上部分所有元素的和 \......
 调整方式：双指针法
 
 左右两个指针指向数组首位
-对于左指......
+对于......
     </div>
   </a>
   
@@ -613,11 +653,14 @@ S[i, j] = 第i行j列格子左上部分所有元素的和 \......
       
     </h3>
     <div class="post-content-preview">
-      NFSPV和PVC
+      NFS
+PV和PVC
+
+
 PV：
 持久卷（PersistentVolume）简称PV，是集群中的一块存储，可以由管理员事先供应。 可以配置NFS、Ceph等常用存储配置，相对于volumes，提供了更多的功能，如生命周期管理、大小的限制。 PV 卷的供应有两种方式：静态供应或动态供应。
 静态： 集群管理员预先创建许多PV，在PV的定义中能够体现存储资源的特性。
-动态： 集群管理员无须预先创建PV，......
+动态： 集群管理员无须预先创建......
     </div>
   </a>
   
@@ -650,7 +693,9 @@ PV：
       
     </h3>
     <div class="post-content-preview">
-      前端Web 前端技术栈：
+      前端
+Web 前端
+技术栈：
 
 语言： JSX+ HTML+CSS
 框架： React
@@ -658,7 +703,8 @@ PV：
 请求方式： Fetch
 服务器：nginx
 
-App 前端技术栈：
+App 前端
+技术栈：
 
 语言： JavaScript + HTML+CSS
 框架： React Native
@@ -667,7 +713,7 @@ App 前端技术栈：
 存储：localStorage
 请求方式： Fetch
 
-后端Jav......
+后端......
     </div>
   </a>
   
@@ -729,11 +775,11 @@ App 前端技术栈：
   <div class="tags">
     
     
-    <a href="/tags/#经验总结" title="经验总结" rel="2">经验总结</a>
-    
-    
-    
     <a href="/tags/#算法学习" title="算法学习" rel="2">算法学习</a>
+    
+    
+    
+    <a href="/tags/#经验总结" title="经验总结" rel="3">经验总结</a>
     
     
     
@@ -800,6 +846,10 @@ App 前端技术栈：
 <div class="widget">
   <ul>
     
+    <a href="cn/%E5%BE%AE%E5%86%85%E6%A0%B8%E4%B8%8A%E7%9A%84%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0/">
+      <li>微内核容器实现</li>
+    </a>
+    
     <a href="paper/Borg%20paper%20reading/">
       <li>Borg paper reading</li>
     </a>
@@ -814,10 +864,6 @@ App 前端技术栈：
     
     <a href="cn/k8s%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/">
       <li>k8s上的数据持久化</li>
-    </a>
-    
-    <a href="cn/22%E6%9A%91%E6%9C%9Fproject%E6%80%BB%E7%BB%93/">
-      <li>22暑期项目小结</li>
     </a>
     
   </ul>
@@ -842,7 +888,7 @@ App 前端技术栈：
 
 <h5><a href="/archives/">archives</a></h5>
 <div class="widget">
-  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
+  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
 </div>
 
 
@@ -1351,5 +1397,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

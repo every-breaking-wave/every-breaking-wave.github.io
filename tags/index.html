@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              ABOUT
+              CATEGORIES
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/tags/">
+            <a href="/about/">
               
-              TAGS
+              ABOUT
               
               
             </a>
@@ -279,9 +279,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/tags/">
               
-              CATEGORIES
+              TAGS
               
               
             </a>
@@ -460,48 +460,15 @@
       <!-- 标签云 -->
       <div id='tag_cloud' class="tags">
         
-        <a href="#经验总结" title="经验总结" rel="2">经验总结</a>
-        
         <a href="#算法学习" title="算法学习" rel="2">算法学习</a>
+        
+        <a href="#经验总结" title="经验总结" rel="3">经验总结</a>
         
         <a href="#paper reading" title="paper reading" rel="1">paper reading</a>
         
       </div>
 
       <!-- 标签列表 -->
-      
-      <div class="one-tag-list">
-        <span class="fa fa-tag listing-seperator" id="经验总结">
-          <span class="tag-text">经验总结</span>
-        </span>
-        
-        <div class="post-preview">
-          <a href="/cn/22暑期project总结/">
-            <h2 class="post-title">
-              22暑期项目小结
-              
-              -- cn
-              
-            </h2>
-            
-          </a>
-        </div>
-        <hr>
-        
-        <div class="post-preview">
-          <a href="/cn/k8s上的数据持久化/">
-            <h2 class="post-title">
-              k8s上的数据持久化
-              
-              -- cn
-              
-            </h2>
-            
-          </a>
-        </div>
-        <hr>
-        
-      </div>
       
       <div class="one-tag-list">
         <span class="fa fa-tag listing-seperator" id="算法学习">
@@ -527,6 +494,52 @@
               简单排序算法
               
               -- 算法
+              
+            </h2>
+            
+          </a>
+        </div>
+        <hr>
+        
+      </div>
+      
+      <div class="one-tag-list">
+        <span class="fa fa-tag listing-seperator" id="经验总结">
+          <span class="tag-text">经验总结</span>
+        </span>
+        
+        <div class="post-preview">
+          <a href="/cn/k8s上的数据持久化/">
+            <h2 class="post-title">
+              k8s上的数据持久化
+              
+              -- cn
+              
+            </h2>
+            
+          </a>
+        </div>
+        <hr>
+        
+        <div class="post-preview">
+          <a href="/cn/22暑期project总结/">
+            <h2 class="post-title">
+              22暑期项目小结
+              
+              -- cn
+              
+            </h2>
+            
+          </a>
+        </div>
+        <hr>
+        
+        <div class="post-preview">
+          <a href="/cn/微内核上的容器实现/">
+            <h2 class="post-title">
+              微内核容器实现
+              
+              -- cn
               
             </h2>
             
@@ -1037,5 +1050,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

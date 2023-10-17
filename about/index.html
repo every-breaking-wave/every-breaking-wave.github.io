@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              ABOUT
+              CATEGORIES
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/tags/">
+            <a href="/about/">
               
-              TAGS
+              ABOUT
               
               
             </a>
@@ -279,9 +279,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/tags/">
               
-              CATEGORIES
+              TAGS
               
               
             </a>
@@ -466,19 +466,23 @@
                 post-container
             ">
 
-      <h2 id="Talk-To-Me"><a href="#Talk-To-Me" class="headerlink" title="Talk To Me"></a>Talk To Me</h2><blockquote>
+      <h2 id="Talk-To-Me">Talk To Me</h2>
+<blockquote>
 <p>庐山烟雨浙江潮，未至千般恨不消</p>
 <p>到得还来别无事，庐山烟雨浙江潮</p>
 </blockquote>
-<h2 id="Just-Me"><a href="#Just-Me" class="headerlink" title="Just Me"></a>Just Me</h2><p><img src="/img/scenery/about_bg2.jpg" width="400" alt="about_bg2"></img></p>
+<h2 id="Just-Me">Just Me</h2>
+<p><img src="/img/scenery/about_bg2.jpg" width="400" alt="about_bg2"></img></p>
 <blockquote>
 <p>SJTUer，SEer，fgo玩家，gal入门爱好者，ygo退坑选手</p>
 </blockquote>
-<h2 id="The-Longest-Way-…"><a href="#The-Longest-Way-…" class="headerlink" title="The Longest Way …"></a>The Longest Way …</h2><p><img src="/img/scenery/about_bg4.jpg" width="400" alt="about_bg4"></img></p>
+<h2 id="The-Longest-Way-…">The Longest Way …</h2>
+<p><img src="/img/scenery/about_bg4.jpg" width="400" alt="about_bg4"></img></p>
 <blockquote>
-<p> 正在学习算法</p>
+<p>正在学习算法</p>
 </blockquote>
-<h2 id="Follow-With-Interest-Blogs"><a href="#Follow-With-Interest-Blogs" class="headerlink" title="Follow With Interest Blogs"></a>Follow With Interest Blogs</h2><blockquote>
+<h2 id="Follow-With-Interest-Blogs">Follow With Interest Blogs</h2>
+<blockquote>
 <p>Email：breaking-wave@sjtu.edu.cn</p>
 </blockquote>
 
@@ -525,11 +529,11 @@
   <div class="tags">
     
     
-    <a href="/tags/#经验总结" title="经验总结" rel="2">经验总结</a>
-    
-    
-    
     <a href="/tags/#算法学习" title="算法学习" rel="2">算法学习</a>
+    
+    
+    
+    <a href="/tags/#经验总结" title="经验总结" rel="3">经验总结</a>
     
     
     
@@ -596,6 +600,10 @@
 <div class="widget">
   <ul>
     
+    <a href="../cn/%E5%BE%AE%E5%86%85%E6%A0%B8%E4%B8%8A%E7%9A%84%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0/">
+      <li>微内核容器实现</li>
+    </a>
+    
     <a href="../paper/Borg%20paper%20reading/">
       <li>Borg paper reading</li>
     </a>
@@ -610,10 +618,6 @@
     
     <a href="../cn/k8s%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/">
       <li>k8s上的数据持久化</li>
-    </a>
-    
-    <a href="../cn/22%E6%9A%91%E6%9C%9Fproject%E6%80%BB%E7%BB%93/">
-      <li>22暑期项目小结</li>
     </a>
     
   </ul>
@@ -638,7 +642,7 @@
 
 <h5><a href="/archives/">archives</a></h5>
 <div class="widget">
-  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
+  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
 </div>
 
 
@@ -1147,5 +1151,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

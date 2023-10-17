@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              关于
+              分类
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/tags/">
+            <a href="/about/">
               
-              标签
+              关于
               
               
             </a>
@@ -279,9 +279,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/tags/">
               
-              分类
+              标签
               
               
             </a>
@@ -407,7 +407,7 @@
             </span>
             <div class="blank_box"></div>
             <span class="meta">
-              Words <span class="post-count">562</span> In Total
+              Words <span class="post-count">565</span> In Total
             </span>
             <div class="blank_box"></div>
             <!-- WordCount end -->
@@ -469,18 +469,23 @@
       <!-- Post Container -->
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
-        <h2 id="NFS"><a href="#NFS" class="headerlink" title="NFS"></a>NFS</h2><h3 id="PV和PVC"><a href="#PV和PVC" class="headerlink" title="PV和PVC"></a>PV和PVC</h3><ul>
-<li><p>PV：</p>
+        <h2 id="NFS">NFS</h2>
+<h3 id="PV和PVC">PV和PVC</h3>
+<ul>
+<li>
+<p>PV：</p>
 <p>持久卷（PersistentVolume）简称PV，是集群中的一块存储，可以由管理员事先供应。 可以配置NFS、Ceph等常用存储配置，相对于volumes，提供了更多的功能，如生命周期管理、大小的限制。 PV 卷的供应有两种方式：静态供应或动态供应。</p>
 <p>静态： 集群管理员预先创建许多PV，在PV的定义中能够体现存储资源的特性。</p>
-<p>动态： 集群管理员无须预先创建PV，而是通过StorageClass的设置对后端存储资源进行描述，标记存储的类型和特性。用户通过创建PVC对存储类型进行申请，系统将自动完成PV的创建及与PVC的绑定。如果PVC声明的Class为空””，则说明PVC不使用动态模式。</p>
+<p>动态： 集群管理员无须预先创建PV，而是通过StorageClass的设置对后端存储资源进行描述，标记存储的类型和特性。用户通过创建PVC对存储类型进行申请，系统将自动完成PV的创建及与PVC的绑定。如果PVC声明的Class为空&quot;&quot;，则说明PVC不使用动态模式。</p>
 </li>
-<li><p>PVC</p>
+<li>
+<p>PVC</p>
 </li>
 </ul>
 <p>持久卷申领（PersistentVolumeClaim，PVC）表达的是用户对存储的请求。就像Pod消耗Node的资源一样，<strong>PVC消耗PV资源</strong>。PVC可以申请存储空间的大小（size）和访问模式。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-volume</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">local</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">20Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/root/sharedata/mysql</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-claim</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">20Gi</span></span><br></pre></td></tr></table></figure>
-<h3 id="volumeMount"><a href="#volumeMount" class="headerlink" title="volumeMount"></a>volumeMount</h3><blockquote>
+<h3 id="volumeMount">volumeMount</h3>
+<blockquote>
 <p>在Docker中就有数据卷的概念，当容器删除时，数据也一起会被删除，想要持久化使用数据，需要把主机上的目录挂载到Docker中去，在K8S中，数据卷是通过Pod实现持久化的，如果Pod删除，数据卷也会一起删除，k8s的数据卷是docker数据卷的扩展，K8S适配各种存储系统，包括本地存储EmptyDir,HostPath,网络存储NFS,GlusterFS,PV/PVC等，下面就详细介绍下K8S的存储如何实现。</p>
 </blockquote>
 <p>我们可以修改mysql-server.yaml来指定持久化存储的地址。</p>
@@ -1209,5 +1214,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
