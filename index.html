@@ -485,8 +485,17 @@
       
     </h3>
     <div class="post-content-preview">
-      11
-...
+      实现Cgroup
+需要考虑两个方面
+
+内核层面的cgroup支持
+与内核交互的接口
+
+Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂（
+
+关于cgroup的原理和源码解析，可以参考:
+Linux源码剖析——CGroup 实现原理_cgroups源码分析_白话机器学习的博客-CSDN博客
+Linux源码剖析——CGroup......
     </div>
   </a>
   
@@ -1397,20 +1406,5 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+	</body>
 </html>
