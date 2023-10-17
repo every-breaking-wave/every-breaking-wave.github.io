@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/about/">
               
-              分类
+              关于
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              关于
+              分类
               
               
             </a>
@@ -491,11 +491,11 @@
 内核层面的cgroup支持
 与内核交互的接口
 
-Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂（
+Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂
 
-关于cgroup的原理和源码解析，可以参考:
-Linux源码剖析——CGroup 实现原理_cgroups源码分析_白话机器学习的博客-CSDN博客
-Linux源码剖析——CGroup......
+关于cgroup的原理和源码解析，可以参考: CGroup 实现原理 , CGroup源码分析
+Linux中的Cgroup实现简析
+Linux将进程以Cgroup为单位切分实现资源隔离，......
     </div>
   </a>
   
@@ -654,11 +654,11 @@ App 前端
     
     
     
-    <a href="/tags/#经验总结" title="经验总结" rel="3">经验总结</a>
-    
-    
-    
     <a href="/tags/#paper reading" title="paper reading" rel="1">paper reading</a>
+    
+    
+    
+    <a href="/tags/#经验总结" title="经验总结" rel="3">经验总结</a>
     
     
   </div>
@@ -1272,5 +1272,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

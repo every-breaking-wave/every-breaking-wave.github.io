@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/about/">
               
-              分类
+              关于
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              关于
+              分类
               
               
             </a>
@@ -475,19 +475,17 @@
 <li>内核层面的cgroup支持</li>
 <li>与内核交互的接口</li>
 </ul>
-<p>Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂（</p>
-<p><img src="https://secure2.wostatic.cn/static/rzysegeaqeRdQRSSsRvvFB/image.png?auth_key=1697548152-uHthWcaUSk95pkoxNKVivt-0-f21f48660b1058e9a449f338cd8f583b&amp;file_size=292228" alt="img"></p>
-<p>关于cgroup的原理和源码解析，可以参考:</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870061">Linux源码剖析——CGroup 实现原理_cgroups源码分析_白话机器学习的博客-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870035">Linux源码剖析——CGroup详解_cgroup源码分析-CSDN博客</a></p>
+<p>Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂</p>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220833380.png" alt="image-20231017220833380"></p>
+<p>关于cgroup的原理和源码解析，可以参考: <a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870061">CGroup 实现原理</a> , <a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870035">CGroup源码分析</a></p>
 <h2 id="Linux中的Cgroup实现简析">Linux中的Cgroup实现简析</h2>
 <p>Linux将进程以Cgroup为单位切分实现资源隔离，效果如图所示</p>
-<img src="https://secure2.wostatic.cn/static/eUBfHHH5T8QHnZWupigaAk/image.png?auth_key=1697547771-3BbKLjUsWYByhqCxt2gxcx-0-105cf1d8f506a5519b7dc061daceb379" alt="img" style="zoom:50%;" />
-<p>实际上cgroup的实际相当复杂，因为涉及到多种资源的控制，下面我主要从设计者的角度分析其实现思路，并简要结合源码分析。</p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220909279.png" alt="image-20231017220909279" style="zoom:67%;" />
+<p>实际上<code>cgroup</code>的实现相当复杂，因为涉及到多种资源的控制，下面我主要从设计者的角度分析其实现思路，并简要结合源码分析。</p>
 <h3 id="实现一个简单的进程组">实现一个简单的进程组</h3>
 <p>其实简单来说，只要我们定义一个数据结构，能够记录一组进程以及它们对应的资源限制即可。</p>
 <p>以下是一个朴素的设计思路:</p>
-<p><img src="https://secure2.wostatic.cn/static/nnEkboXEGZXZKKv1aiQy6w/image.png?auth_key=1697547923-4Pkrr4vPnLPqyo39wvHgEi-0-20661d73d791d57ae959eefb6f03230c" alt="img"></p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220924488.png" alt="image-20231017220924488" style="zoom:50%;" />
 <p>我们通过链表来将进程组织成进程组，并且在计数器中增加一个 <code>task_group</code> 字段，让其指向进程组。当进程组中的进程申请内存时，可以通过指针来找到对应的计数器，并且增加计数器的 <code>count</code> 字段。</p>
 <p>就这样，我们设计了一个简单的进程组功能。如果系统只有内存这种资源的话，的确可以这样设计。但是系统除了内存，还有CPU、硬盘和网络这些资源，所以 Linux 创建了一种比较通用的方式来组织进程组，也就是cgroup。</p>
 <h3 id="通过Hierarchy组织CGroup">通过Hierarchy组织CGroup</h3>
@@ -528,7 +526,7 @@
 <p>可以看出，<code>subsys</code> 字段是一个 <code>cgroup_subsys_state</code> 结构的数组，数组的大小为系统支持的 <code>资源控制子系统</code> 数（也就是说，数组上的每个槽位对应着一个子系统资统计对象）。如下图所示：</p>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017213720044.png" alt="image-20231017213720044"></p>
 <p>在 Linux 内核中，一个进程可以属于多个 <code>控制组</code>，而每个 <code>控制组</code> 又关联着一个或多个 <code>资源统计对象</code>。所以，一个进程所关联的 <code>资源统计对象</code> 是其所在 <code>控制组</code> 关联的 <code>资源统计对象</code> 的集合。这句话有点难懂，我们用一幅图来说明：</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017213743888.png" alt="image-20231017213743888"></p>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017222348578.png" alt="image-20231017222348578"></p>
 <p>如上图所示：</p>
 <ul>
 <li><code>进程A</code> 属于控制组 <code>/sys/fs/cgroup/memory/cgrp1/cgrp3</code> 和控制组 <code>/sys/fs/cgroup/cpu/cgrp2/cgrp3</code>，所以 <code>进程A</code> 就关联了 <code>mem_group A</code> 和 <code>task_group A</code> 这两个资源统计对象。</li>
@@ -1260,5 +1258,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

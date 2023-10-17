@@ -246,9 +246,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/about/">
               
-              CATEGORIES
+              ABOUT
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/about/">
+            <a href="/categories/">
               
-              ABOUT
+              CATEGORIES
               
               
             </a>
@@ -462,9 +462,9 @@
         
         <a href="#算法学习" title="算法学习" rel="2">算法学习</a>
         
-        <a href="#经验总结" title="经验总结" rel="3">经验总结</a>
-        
         <a href="#paper reading" title="paper reading" rel="1">paper reading</a>
+        
+        <a href="#经验总结" title="经验总结" rel="3">经验总结</a>
         
       </div>
 
@@ -504,22 +504,29 @@
       </div>
       
       <div class="one-tag-list">
-        <span class="fa fa-tag listing-seperator" id="经验总结">
-          <span class="tag-text">经验总结</span>
+        <span class="fa fa-tag listing-seperator" id="paper reading">
+          <span class="tag-text">paper reading</span>
         </span>
         
         <div class="post-preview">
-          <a href="/cn/k8s上的数据持久化/">
+          <a href="/paper/Borg paper reading/">
             <h2 class="post-title">
-              k8s上的数据持久化
+              Borg paper reading
               
-              -- cn
+              -- paper
               
             </h2>
             
           </a>
         </div>
         <hr>
+        
+      </div>
+      
+      <div class="one-tag-list">
+        <span class="fa fa-tag listing-seperator" id="经验总结">
+          <span class="tag-text">经验总结</span>
+        </span>
         
         <div class="post-preview">
           <a href="/cn/22暑期project总结/">
@@ -535,9 +542,9 @@
         <hr>
         
         <div class="post-preview">
-          <a href="/cn/微内核上的容器实现/">
+          <a href="/cn/k8s上的数据持久化/">
             <h2 class="post-title">
-              微内核容器实现
+              k8s上的数据持久化
               
               -- cn
               
@@ -547,19 +554,12 @@
         </div>
         <hr>
         
-      </div>
-      
-      <div class="one-tag-list">
-        <span class="fa fa-tag listing-seperator" id="paper reading">
-          <span class="tag-text">paper reading</span>
-        </span>
-        
         <div class="post-preview">
-          <a href="/paper/Borg paper reading/">
+          <a href="/cn/微内核上的容器实现/">
             <h2 class="post-title">
-              Borg paper reading
+              微内核容器实现
               
-              -- paper
+              -- cn
               
             </h2>
             
@@ -1050,5 +1050,20 @@ start: '#bbbbee', end: '#0085a1' } }; $('#tag_cloud a').tagcloud(); }) } </scrip
 
 
 		
-	</body>
+	<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>
