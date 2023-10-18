@@ -403,11 +403,11 @@
             <!-- WordCount start -->
             <div class="blank_box"></div>
             <span class="meta">
-              Estimated Reading Time <span class="post-count">4</span> Minutes
+              Estimated Reading Time <span class="post-count">3</span> Minutes
             </span>
             <div class="blank_box"></div>
             <span class="meta">
-              Words <span class="post-count">914</span> In Total
+              Words <span class="post-count">842</span> In Total
             </span>
             <div class="blank_box"></div>
             <!-- WordCount end -->
@@ -472,19 +472,15 @@
         <h2 id="前缀和问题">前缀和问题</h2>
 <p>前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用<strong>空间换时间</strong>的策略。</p>
 <ul>
-<li>一维前缀和</li>
+<li>
+<p>一维前缀和</p>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231018163514419.png" alt=""></p>
+</li>
+<li>
+<p>二维前缀和</p>
+</li>
 </ul>
-<p>$$<br>
-S[i]=a[1]+a[2]+…a[i] \\ a[l]+…+a[r]=S[r]−S[l−1]<br>
-$$</p>
-<ul>
-<li>二维前缀和</li>
-</ul>
-<p>$$<br>
-S[i, j] = 第i行j列格子左上部分所有元素的和 \\<br>
-以(x1, y1)为左上角，(x2, y2)为右下角的子矩阵的和为：\\<br>
-S[x2, y2] - S[x1 - 1, y2] - S[x2, y1 - 1] + S[x1 - 1, y1 - 1]<br>
-$$</p>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231018164915804.png" alt="image-20231018164915804"></p>
 <h2 id="一维差分问题">一维差分问题</h2>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0.png" alt=""></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//差分 时间复杂度 o(m)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> a[N], b[N];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, m;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;a[i]);</span><br><span class="line">        b[i] = a[i] - a[i - <span class="number">1</span>];      <span class="comment">//构建差分数组</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> l, r, c;</span><br><span class="line">    <span class="keyword">while</span> (m--)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>, &amp;l, &amp;r, &amp;c);</span><br><span class="line">        b[l] += c;     <span class="comment">//将序列中[l, r]之间的每个数都加上c</span></span><br><span class="line">        b[r + <span class="number">1</span>] -= c;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">        a[i] = b[i] + a[i - <span class="number">1</span>];    <span class="comment">//前缀和运算</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, a[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
