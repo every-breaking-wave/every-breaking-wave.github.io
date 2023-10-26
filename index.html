@@ -257,17 +257,6 @@
           
           
           <li>
-            <a href="/archive/">
-              
-              ARCHIVES
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
             <a href="/categories/">
               
               CATEGORIES
@@ -282,6 +271,17 @@
             <a href="/tags/">
               
               TAGS
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/archive/">
+              
+              ARCHIVES
               
               
             </a>
@@ -485,7 +485,8 @@
       
     </h3>
     <div class="post-content-preview">
-      实现Cgroup
+      众所周知Docker的实现基于Linux内核提供的cgroup和namespace两个功能，本篇文章的目的是在chcore这一微内核架构上实现这两个功能，也就是实现微内核上的容器功能。
+实现Cgroup
 需要考虑两个方面
 
 内核层面的cgroup支持
@@ -493,9 +494,7 @@
 
 Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂
 
-关于cgroup的原理和源码解析，可以参考: CGroup 实现原理 , CGroup源码分析
-Linux中的Cgroup实现简析
-Linux将进程以Cgroup为单位切分实现资源隔离，......
+......
     </div>
   </a>
   
@@ -547,141 +546,6 @@ From User’s Perspective
   <div class="tags">
     
     <a href="/tags/#paper reading" title="paper reading">paper reading</a>
-    
-  </div>
-  
-
-</div>
-<hr>
-
-<div class="post-preview">
-  
-  <!-- top start (article top hot config) -->
-  
-  <!-- top end -->
-  
-
-  <a href="/算法/前缀和与差分/">
-    <h2 class="post-title">
-      前缀和与差分
-    </h2>
-    <h3 class="post-subtitle">
-      
-    </h3>
-    <div class="post-content-preview">
-      前缀和问题
-前缀和主要是用于需要频繁地对数列中某块连续区间求和，相比于每次时间复杂度为 O(n) 的累加，我们只需要在事先计算好的前缀和数列中取出对应位置的数作差即可，是一种用空间换时间的策略。
-
-
-一维前缀和
-
-
-
-二维前缀和
-
-
-
-一维差分问题
-
-123456789101112131415161718192021222324//差分 时间复杂度 o(m)#include&lt;iostr......
-    </div>
-  </a>
-  
-  <p class="post-meta" style="margin: 10px 0;">
-    Posted by breaking-wave on
-    2022-09-18
-  </p>
-  <div class="tags">
-    
-    <a href="/tags/#算法学习" title="算法学习">算法学习</a>
-    
-  </div>
-  
-
-</div>
-<hr>
-
-<div class="post-preview">
-  
-  <!-- top start (article top hot config) -->
-  
-  <!-- top end -->
-  
-
-  <a href="/算法/简单排序算法/">
-    <h2 class="post-title">
-      简单排序算法
-    </h2>
-    <h3 class="post-subtitle">
-      
-    </h3>
-    <div class="post-content-preview">
-      排序
-稳定的排序指相同大小的数排完之后顺序不变
-
-快排不稳定
-归并排序稳定
-
-1. 快排 (平均时间复杂度：O(nlogn) ）
-
-确定分界点 ： q[l], q[l + r /2 ], q[r] 均可， 对于有一定顺序的选择 l + r / 2
-调整区间： 使左边所有数均小于x，右边所有数大于x （key step)
-递归处理左右两端
-
-调整方式：双指针法
-
-左右两个指针指向数组首位
-对于......
-    </div>
-  </a>
-  
-  <p class="post-meta" style="margin: 10px 0;">
-    Posted by breaking-wave on
-    2022-09-17
-  </p>
-  <div class="tags">
-    
-    <a href="/tags/#算法学习" title="算法学习">算法学习</a>
-    
-  </div>
-  
-
-</div>
-<hr>
-
-<div class="post-preview">
-  
-  <!-- top start (article top hot config) -->
-  
-  <!-- top end -->
-  
-
-  <a href="/cn/k8s上的数据持久化/">
-    <h2 class="post-title">
-      k8s上的数据持久化
-    </h2>
-    <h3 class="post-subtitle">
-      
-    </h3>
-    <div class="post-content-preview">
-      NFS
-PV和PVC
-
-
-PV：
-持久卷（PersistentVolume）简称PV，是集群中的一块存储，可以由管理员事先供应。 可以配置NFS、Ceph等常用存储配置，相对于volumes，提供了更多的功能，如生命周期管理、大小的限制。 PV 卷的供应有两种方式：静态供应或动态供应。
-静态： 集群管理员预先创建许多PV，在PV的定义中能够体现存储资源的特性。
-动态： 集群管理员无须预先创建......
-    </div>
-  </a>
-  
-  <p class="post-meta" style="margin: 10px 0;">
-    Posted by breaking-wave on
-    2022-09-16
-  </p>
-  <div class="tags">
-    
-    <a href="/tags/#经验总结" title="经验总结">经验总结</a>
     
   </div>
   
@@ -786,15 +650,11 @@ App 前端
   <div class="tags">
     
     
-    <a href="/tags/#经验总结" title="经验总结" rel="3">经验总结</a>
+    <a href="/tags/#经验总结" title="经验总结" rel="2">经验总结</a>
     
     
     
     <a href="/tags/#paper reading" title="paper reading" rel="1">paper reading</a>
-    
-    
-    
-    <a href="/tags/#算法学习" title="算法学习" rel="2">算法学习</a>
     
     
   </div>
@@ -865,16 +725,8 @@ App 前端
       <li>Borg paper reading</li>
     </a>
     
-    <a href="%E7%AE%97%E6%B3%95/%E5%89%8D%E7%BC%80%E5%92%8C%E4%B8%8E%E5%B7%AE%E5%88%86/">
-      <li>前缀和与差分</li>
-    </a>
-    
-    <a href="%E7%AE%97%E6%B3%95/%E7%AE%80%E5%8D%95%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
-      <li>简单排序算法</li>
-    </a>
-    
-    <a href="cn/k8s%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/">
-      <li>k8s上的数据持久化</li>
+    <a href="cn/22%E6%9A%91%E6%9C%9Fproject%E6%80%BB%E7%BB%93/">
+      <li>22暑期项目小结</li>
     </a>
     
   </ul>
@@ -899,7 +751,7 @@ App 前端
 
 <h5><a href="/archives/">archives</a></h5>
 <div class="widget">
-  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="archives/2022/09/">September 2022</a><span class="archive-list-count">5</span></li></ul>
+  <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="archives/2022/09/">September 2022</a><span class="archive-list-count">2</span></li></ul>
 </div>
 
 
@@ -913,10 +765,6 @@ App 前端
     
     <a href="/categories/#集群开发">
       <li>集群开发</li>
-    </a>
-    
-    <a href="/categories/#算法">
-      <li>算法</li>
     </a>
     
   </ul>

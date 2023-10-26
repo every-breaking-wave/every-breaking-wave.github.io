@@ -257,17 +257,6 @@
           
           
           <li>
-            <a href="/archive/">
-              
-              归档
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
             <a href="/categories/">
               
               分类
@@ -282,6 +271,17 @@
             <a href="/tags/">
               
               标签
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/archive/">
+              
+              归档
               
               
             </a>
@@ -403,11 +403,11 @@
             <!-- WordCount start -->
             <div class="blank_box"></div>
             <span class="meta">
-              Estimated Reading Time <span class="post-count">7</span> Minutes
+              Estimated Reading Time <span class="post-count">10</span> Minutes
             </span>
             <div class="blank_box"></div>
             <span class="meta">
-              Words <span class="post-count">2k</span> In Total
+              Words <span class="post-count">2.8k</span> In Total
             </span>
             <div class="blank_box"></div>
             <!-- WordCount end -->
@@ -469,7 +469,8 @@
       <!-- Post Container -->
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
-        <h1>实现Cgroup</h1>
+        <p>众所周知Docker的实现基于Linux内核提供的cgroup和namespace两个功能，本篇文章的目的是在chcore这一微内核架构上实现这两个功能，也就是实现微内核上的容器功能。</p>
+<h1>实现Cgroup</h1>
 <p>需要考虑两个方面</p>
 <ul>
 <li>内核层面的cgroup支持</li>
@@ -537,6 +538,61 @@
 <p>在 <code>进程描述符结构（task_struct）</code> 中有个指向 <code>css_set</code> 结构的指针，如下所示：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct task_struct &#123;</span><br><span class="line">    ...</span><br><span class="line">    struct css_set *cgroups;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>所以，当把一个进程添加到一个 <code>cgroup</code> 时，将会把 <code>cgroup</code> 关联的 <code>资源统计对象</code> 添加到进程的 <code>cgroups</code> 字段中，从而使进程受到这些 <code>资源统计对象</code> 的限制 （这句话是实现cgroup控制的进程的精髓）。</p>
+<h2 id="如何在Chcore中实现Cgroup功能">如何在Chcore中实现Cgroup功能</h2>
+<p>我们先考虑实现memory的cgroup隔离，TA为我们提供了一个可能的思路：</p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231020000057987.png" alt="image-20231020000057987" style="zoom:67%;" />
+<p>基本思路如下：</p>
+<ul>
+<li>在容器进程尝试分配内存并触发page fault尝试通过buddy算法获取物理页的时候修改该进程的物理内存使用量</li>
+<li>该进程属于某个进程集合，且存在文件记录了这些进程的内存使用总量和上限</li>
+<li>当内存总量超过上限时会触发异常（例如OOM或拒绝分配且抛出警告）</li>
+<li>考虑一些corner case: Spawn/IPC 不破坏性能隔离/资源隔离</li>
+</ul>
+<p>这个思路是显而易见的，因此我们需要弄清楚的问题就是：</p>
+<ul>
+<li>chcore的内存申请的整个链路</li>
+<li>怎么保存进程组的内存使用信息</li>
+</ul>
+<p>复习一下chcore的内存分配吧！</p>
+<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231020160050574.png" alt="image-20231020160050574"></p>
+<p>这里我们需要考虑的是fd不为1的情况，也就是内存分配而非文件内存映射，调用chcore_sys_call后，chcore会切换到el1特权级，并根据sys_call的table选择需要调用的handle函数,，以下为sys_handle_mmap的源代码:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">u64 <span class="title">sys_handle_mmap</span><span class="params">(u64 addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd,</span></span></span><br><span class="line"><span class="function"><span class="params">		    u64 offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vmspace</span> *<span class="title">vmspace</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">pmobject</span> *<span class="title">pmo</span>;</span></span><br><span class="line">	<span class="keyword">vmr_prop_t</span> vmr_prot;</span><br><span class="line">	u64 map_addr;</span><br><span class="line">	<span class="keyword">int</span> new_pmo_cap;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...delete some checks...</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add one anonymous mapping, i.e., the cap in new_pmo_cap */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Round up @length */</span></span><br><span class="line">	<span class="keyword">if</span> (length % PAGE_SIZE) &#123;</span><br><span class="line">		length = ROUND_UP(length, PAGE_SIZE);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Create the pmo for the mmap area */</span></span><br><span class="line">	pmo = obj_alloc(TYPE_PMO, <span class="keyword">sizeof</span>(*pmo));</span><br><span class="line">	<span class="keyword">if</span> (!pmo) &#123;</span><br><span class="line">		kinfo(<span class="string">&quot;Fail: cannot create the initial heap pmo.\n&quot;</span>);</span><br><span class="line">		BUG_ON(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/* Set the pmo type as PMO_ANONYM */</span></span><br><span class="line">	pmo_init(pmo, PMO_ANONYM, length, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Create the cap for this pmo */</span></span><br><span class="line">	new_pmo_cap = cap_alloc(current_cap_group, pmo, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (new_pmo_cap &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		kinfo(<span class="string">&quot;Fail: cannot create cap for the new pmo\n&quot;</span>);</span><br><span class="line">		BUG_ON(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Change the vmspace */</span></span><br><span class="line">	vmspace = obj_get(current_cap_group, VMSPACE_OBJ_ID, TYPE_VMSPACE);</span><br><span class="line">	vmr_prot = get_vmr_prot(prot);</span><br><span class="line">	map_addr = vmspace_mmap_with_pmo(vmspace, pmo, length, vmr_prot);</span><br><span class="line">	obj_put(vmspace);</span><br><span class="line"></span><br><span class="line">	kdebug(<span class="string">&quot;mmap done: map_addr is %p\n&quot;</span>, map_addr);</span><br><span class="line">	<span class="keyword">return</span> map_addr;</span><br><span class="line"></span><br><span class="line">err_exit:</span><br><span class="line">	map_addr = (u64)(<span class="number">-1L</span>);</span><br><span class="line">	<span class="keyword">return</span> map_addr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建 pmobject 对象（<code>obj_alloc</code> $\rightarrow$<code>kzalloc</code>$$\rightarrow$$<code>kmalloc</code>）</li>
+<li>创建 pmobject 对象的内核对象句柄<code>cap</code>（<code>cap_alloc</code>$$\rightarrow$$<code>kmalloc</code>）</li>
+<li>映射 pmobject 对象到虚拟地址空间：
+<ul>
+<li>获取当前进程的 vmspace 对象。</li>
+<li>通过 get_vmr_prot 将传入的保护标志转换为对应的虚拟内存区域属性。</li>
+<li>调用 vmspace_mmap_with_pmo ，将新创建的 pmobject 对象映射到进程的虚拟地址空间中。</li>
+<li>释放 pmobject 对象的句柄和引用计数，避免内存泄漏，使用 obj_put 函数释放 pmobject 内核对象句柄。</li>
+</ul>
+</li>
+<li>返回映射区域的起始地址给 map_addr 变量。</li>
+</ol>
+<p>再回顾一下chcore的kernel异常处理流程:</p>
+<p>在<code>kernel/arch/xxx/irq/irq_entry.上S</code>定义分发异常。</p>
+<ul>
+<li>若为<code>IRQ</code>，则在<code>irq_entry.c</code>中的<code>handle_irq</code>交给平台相关的<code>plat_handle_irq</code>处理。最后调用scheduler切换到合适的线程。</li>
+<li>若为<code>SYSCALL</code>，则利用<code>kernel/syscall/syscall.c</code>中的<code>syscall_table</code>通过偏移量找到对应函数的入口。</li>
+<li>若为其他异常，如Page Fault，则在<code>irq_entry.c</code>中的<code>handle_entry_c</code>根据EC的不同分发到不同的入口。<code>handle_entry_c</code>中传入的两个参数：<code>esr</code>为Exception Syndrome Register，包含了导致这个exception的原因，从manual抄下来的原因在<code>register.h</code>中；<code>address</code>是导致这个异常的地址。</li>
+</ul>
+<p>结合以上知识，我们可以产生一些general的想法：</p>
+<h3 id="tips">tips</h3>
+<ul>
+<li>
+<p>先在进程申请/释放内存的时候打印日志</p>
+</li>
+<li>
+<p>构思用怎样的方式存储group-&gt;mem_use</p>
+</li>
+<li>
+<p>看看linux是怎么进行文件操作的</p>
+</li>
+<li>
+<p>子进程应该继承父进程的cgroup</p>
+</li>
+</ul>
 
 
         <hr>
@@ -687,7 +743,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">目录</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">实现Cgroup</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Linux%E4%B8%AD%E7%9A%84Cgroup%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%9E%90"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux中的Cgroup实现简析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">实现一个简单的进程组</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87Hierarchy%E7%BB%84%E7%BB%87CGroup"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">通过Hierarchy组织CGroup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E8%81%94Hierarchy%E4%B8%8ESubsys"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">关联Hierarchy与Subsys</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%B5%84%E6%BA%90%E7%BB%9F%E8%AE%A1%E5%AF%B9%E8%B1%A1"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">资源统计对象</span></a></li></ol></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">实现Cgroup</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Linux%E4%B8%AD%E7%9A%84Cgroup%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%9E%90"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux中的Cgroup实现简析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">实现一个简单的进程组</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87Hierarchy%E7%BB%84%E7%BB%87CGroup"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">通过Hierarchy组织CGroup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E8%81%94Hierarchy%E4%B8%8ESubsys"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">关联Hierarchy与Subsys</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%B5%84%E6%BA%90%E7%BB%9F%E8%AE%A1%E5%AF%B9%E8%B1%A1"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">资源统计对象</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8Chcore%E4%B8%AD%E5%AE%9E%E7%8E%B0Cgroup%E5%8A%9F%E8%83%BD"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">如何在Chcore中实现Cgroup功能</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#tips"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">tips</span></a></li></ol></li></ol></li></ol>
         
         </div>
       </aside>
