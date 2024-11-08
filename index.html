@@ -257,9 +257,9 @@
           
           
           <li>
-            <a href="/categories/">
+            <a href="/archive/">
               
-              CATEGORIES
+              ARCHIVES
               
               
             </a>
@@ -268,9 +268,9 @@
           
           
           <li>
-            <a href="/archive/">
+            <a href="/categories/">
               
-              ARCHIVES
+              CATEGORIES
               
               
             </a>
@@ -485,7 +485,10 @@
       
     </h3>
     <div class="post-content-preview">
-      ...
+      Introduction To Chcore本部分将对IPADS实验室开发的chcore微内核进行简单介绍，部分内容参考了chcore-lab的相关文档。
+chcore lab代码见：SJTU-IPADS/OS-Course-Lab
+对于chcore和微内核的介绍可以参考：面向教学与科研的ChCore微内核
+...
     </div>
   </a>
   
@@ -518,8 +521,7 @@
       
     </h3>
     <div class="post-content-preview">
-      为什么需要切换Linux内核为自定义参数版本
-Linux内核是操作系统的核心，也是操作系统最基本的部分。Linux内核的体积结构是单内核的、但是他充分采用了微内核的设计思想、使得虽然是单内核、但工作在模块化的方式下、并且这个模块可以动态装载或卸载；Linux负责管理系统的进程、内存、设备驱动程序、文件和网络系统，决定着系统的性能和稳定性。如是我们在了解Linux内核的基础上根据自己的需要量身......
+      为什么需要切换Linux内核为自定义参数版本Linux内核是操作系统的核心，也是操作系统最基本的部分。Linux内核的体积结构是单内核的、但是他充分采用了微内核的设计思想、使得虽然是单内核、但工作在模块化的方式下、并且这个模块可以动态装载或卸载；Linux负责管理系统的进程、内存、设备驱动程序、文件和网络系统，决定着系统的性能和稳定性。如是我们在了解Linux内核的基础上根据自己的需要量身定......
     </div>
   </a>
   
@@ -553,15 +555,14 @@ Linux内核是操作系统的核心，也是操作系统最基本的部分。Lin
     </h3>
     <div class="post-content-preview">
       众所周知Docker的实现基于Linux内核提供的cgroup和namespace两个功能，本篇文章的目的是在chcore这一微内核架构上实现这两个功能，也就是实现微内核上的容器功能。
-实现Cgroup
-需要考虑两个方面
+实现Cgroup需要考虑两个方面
 
 内核层面的cgroup支持
 与内核交互的接口
 
 Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂
 
-......
+关......
     </div>
   </a>
   
@@ -594,15 +595,14 @@ Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具�
       
     </h3>
     <div class="post-content-preview">
-      Borg 系统是Google广泛使用的一个集群管理器，有着&quot;kubernetes的前身&quot;之称，本文介绍了Borg的架构和许多特性。
+      Borg 系统是Google广泛使用的一个集群管理器，有着”kubernetes的前身”之称，本文介绍了Borg的架构和许多特性。
 Borg的主要优点：
 
 隐藏资源管理和故障处理的详细信息，以便其用户可以专注于应用程序开发；
 具有很高的可靠性和可用性，并支持相同的应用；
 让我们有效地在成千上万的计算机上运行工作负载。
 
-From User’s Perspective
-工作......
+From User’s Perspective工作负载工作负载主要分为两......
     </div>
   </a>
   
@@ -635,9 +635,7 @@ From User’s Perspective
       
     </h3>
     <div class="post-content-preview">
-      前端
-Web 前端
-技术栈：
+      前端Web 前端技术栈：
 
 语言： JSX+ HTML+CSS
 框架： React
@@ -645,8 +643,7 @@ Web 前端
 请求方式： Fetch
 服务器：nginx
 
-App 前端
-技术栈：
+App 前端技术栈：
 
 语言： JavaScript + HTML+CSS
 框架： React Native
@@ -655,7 +652,7 @@ App 前端
 存储：localStorage
 请求方式： Fetch
 
-后端......
+后端Jav......
     </div>
   </a>
   
@@ -721,11 +718,11 @@ App 前端
     
     
     
-    <a href="/tags/#paper reading" title="paper reading" rel="1">paper reading</a>
-    
-    
-    
     <a href="/tags/#kernel" title="kernel" rel="2">kernel</a>
+    
+    
+    
+    <a href="/tags/#paper reading" title="paper reading" rel="1">paper reading</a>
     
     
   </div>
