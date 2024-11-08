@@ -246,28 +246,6 @@
           
           
           <li>
-            <a href="/about/">
-              
-              关于
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
-            <a href="/archive/">
-              
-              归档
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
             <a href="/categories/">
               
               分类
@@ -282,6 +260,28 @@
             <a href="/tags/">
               
               标签
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/about/">
+              
+              关于
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/archive/">
+              
+              归档
               
               
             </a>
@@ -470,7 +470,8 @@
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
         <p>众所周知Docker的实现基于Linux内核提供的cgroup和namespace两个功能，本篇文章的目的是在chcore这一微内核架构上实现这两个功能，也就是实现微内核上的容器功能。</p>
-<h1 id="实现Cgroup"><a href="#实现Cgroup" class="headerlink" title="实现Cgroup"></a>实现Cgroup</h1><p>需要考虑两个方面</p>
+<h1>实现Cgroup</h1>
+<p>需要考虑两个方面</p>
 <ul>
 <li>内核层面的cgroup支持</li>
 <li>与内核交互的接口</li>
@@ -478,22 +479,26 @@
 <p>Linux内核实现了一系列的数据结构如cgroup_subsys和cftype等，具体数据结构关系如下如所示，有够复杂</p>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220833380.png" alt="image-20231017220833380"></p>
 <p>关于cgroup的原理和源码解析，可以参考: <a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870061">CGroup 实现原理</a> , <a target="_blank" rel="noopener" href="https://blog.csdn.net/zy_dreamer/article/details/131870035">CGroup源码分析</a></p>
-<h2 id="Linux中的Cgroup实现简析"><a href="#Linux中的Cgroup实现简析" class="headerlink" title="Linux中的Cgroup实现简析"></a>Linux中的Cgroup实现简析</h2><p>Linux将进程以Cgroup为单位切分实现资源隔离，效果如图所示</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220909279.png" alt="image-20231017220909279" style="zoom:67%;" /></p>
+<h2 id="Linux中的Cgroup实现简析">Linux中的Cgroup实现简析</h2>
+<p>Linux将进程以Cgroup为单位切分实现资源隔离，效果如图所示</p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220909279.png" alt="image-20231017220909279" style="zoom:67%;" />
 <p>实际上<code>cgroup</code>的实现相当复杂，因为涉及到多种资源的控制，下面我主要从设计者的角度分析其实现思路，并简要结合源码分析。</p>
-<h3 id="实现一个简单的进程组"><a href="#实现一个简单的进程组" class="headerlink" title="实现一个简单的进程组"></a>实现一个简单的进程组</h3><p>其实简单来说，只要我们定义一个数据结构，能够记录一组进程以及它们对应的资源限制即可。</p>
+<h3 id="实现一个简单的进程组">实现一个简单的进程组</h3>
+<p>其实简单来说，只要我们定义一个数据结构，能够记录一组进程以及它们对应的资源限制即可。</p>
 <p>以下是一个朴素的设计思路:</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220924488.png" alt="image-20231017220924488" style="zoom:50%;" /></p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017220924488.png" alt="image-20231017220924488" style="zoom:50%;" />
 <p>我们通过链表来将进程组织成进程组，并且在计数器中增加一个 <code>task_group</code> 字段，让其指向进程组。当进程组中的进程申请内存时，可以通过指针来找到对应的计数器，并且增加计数器的 <code>count</code> 字段。</p>
 <p>就这样，我们设计了一个简单的进程组功能。如果系统只有内存这种资源的话，的确可以这样设计。但是系统除了内存，还有CPU、硬盘和网络这些资源，所以 Linux 创建了一种比较通用的方式来组织进程组，也就是cgroup。</p>
-<h3 id="通过Hierarchy组织CGroup"><a href="#通过Hierarchy组织CGroup" class="headerlink" title="通过Hierarchy组织CGroup"></a>通过Hierarchy组织CGroup</h3><p>Linux将<code>CGroup</code> 当成是一个目录，由于目录有层级关系，所以 <code>CGroup</code> 也有层级关系，如下图所示：</p>
+<h3 id="通过Hierarchy组织CGroup">通过Hierarchy组织CGroup</h3>
+<p>Linux将<code>CGroup</code> 当成是一个目录，由于目录有层级关系，所以 <code>CGroup</code> 也有层级关系，如下图所示：</p>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017211930283.png" alt="image-20231017211930283"></p>
 <p>每个控制组都记录着自己包含的进程列表（实际上，它被记录在对应目录中一个叫<code>tasks</code>的文件中）。</p>
 <p>在内核中，控制组使用 <code>cgroup</code> 结构来表示，其定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> &#123;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 下面3个字段把控制组连接成一个树结构</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span>   <span class="comment">// 兄弟节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span>  <span class="comment">// 子节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">parent</span>;</span>      <span class="comment">// 父节点</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dentry</span> *<span class="title">dentry</span>;</span>      <span class="comment">// 当前控制组对应的目录对象</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当前控制组关联的子系统资源统计对象</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *<span class="title">subsys</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span> </span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>内核通过 <code>cgroup</code> 结构的 <code>sibling</code>、<code>children</code> 和 <code>parent</code> 这3个字段来将 <code>控制组</code> 组织成一棵树状结构，这就是组织<code>cgroup</code>的<code>hierarchy</code>。如下图所示：</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017212149330.png" alt="image-20231017212149330" style="zoom:47%;" /></p>
-<h3 id="关联Hierarchy与Subsys"><a href="#关联Hierarchy与Subsys" class="headerlink" title="关联Hierarchy与Subsys"></a>关联Hierarchy与Subsys</h3><p><code>cgroup</code> 结构的 <code>subsys</code> 字段表示当前控制组关联的<code>子系统状态对象</code>，也就是cpu或者memory这种资源对象，一个<code>cgroup</code>可以关联到多个<code>subsys</code>，处在同一个<code>Hierarchy</code>的<code>cgroup</code>必然关联到同一个<code>subsys</code>。</p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017212149330.png" alt="image-20231017212149330" style="zoom:47%;" />
+<h3 id="关联Hierarchy与Subsys">关联Hierarchy与Subsys</h3>
+<p><code>cgroup</code> 结构的 <code>subsys</code> 字段表示当前控制组关联的<code>子系统状态对象</code>，也就是cpu或者memory这种资源对象，一个<code>cgroup</code>可以关联到多个<code>subsys</code>，处在同一个<code>Hierarchy</code>的<code>cgroup</code>必然关联到同一个<code>subsys</code>。</p>
 <p>在Linux中，每种<code>subsys</code>都由一个名为 <code>cgroup_subsys</code> 的结构来描述，其定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *(*<span class="title">create</span>)(<span class="keyword">struct</span> <span class="title">cgroup_subsys</span> *<span class="title">ss</span>, </span></span><br><span class="line"><span class="class">                                          <span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">cgrp</span>);</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">void</span> (*attach)(struct cgroup_subsys *ss, struct cgroup *cgrp,</span><br><span class="line">                   struct cgroup *old_cgrp, struct task_struct *tsk);</span><br><span class="line">    <span class="keyword">void</span> (*fork)(struct cgroup_subsys *ss, struct task_struct *task);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">exit</span>)(struct cgroup_subsys *ss, struct task_struct *task);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">int</span> subsys_id;</span><br><span class="line">    <span class="keyword">int</span> active;</span><br><span class="line">    <span class="keyword">int</span> disabled;</span><br><span class="line">    <span class="keyword">int</span> early_init;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;            <span class="comment">// 子系统名字</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroupfs_root</span> *<span class="title">root</span>;</span>  <span class="comment">// 关联的层级根节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *<span class="keyword">private</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>在内核中，<code>hierarchy</code>的根结点使用 <code>cgroupfs_root</code>结构来表示， 定义如下：</p>
@@ -502,12 +507,13 @@
 <p>在 Linux 内核中，可以存在多个 <code>hierarchy</code>，每个<code>hierarchy</code>可以关联一个或多个 <code>资源控制子系统</code>，但同一个 <code>subsys</code> 不能关联到多个<code>hierarchy</code>中（这其实也很好理解，因为<code>cgroup_subsys</code>的<code>cgroupfs_root</code>只有一个）。如下图所示：</p>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017212249021.png" alt="image-20231017212249021"></p>
 <p>在上述两图中，memory和cpu这两个<code>subsys</code>都已经被关联，因此不可能再有新的<code>hierarchy</code>与他们产生关联，但是支持将他们关联到同一个<code>hierarchy</code>上，如</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017212704938.png" alt="image-20231017212704938" style="zoom:67%;" /></p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017212704938.png" alt="image-20231017212704938" style="zoom:67%;" />
 <p>在 Linux 内核中，有个名为 <code>rootnode</code> 的根层级，在系统启动后，由内核自动创建并且初始化的层级。系统启动后，所有的资源控制子系统都关联到此层级。</p>
 <p>如果用户想把资源控制子系统关联到其他层级，那么可以使用 <code>mount</code> 命令来进行挂载，如下命令所示：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mount -t cgroup -o memory memory /sys/fs/cgroup/memory</span><br></pre></td></tr></table></figure>
 <p>上面的命令用于将内存<code>subsys</code>重新关联到 <code>/sys/fs/cgroup/memory</code> 这个<code>hierarchy</code>。</p>
-<h3 id="资源统计对象"><a href="#资源统计对象" class="headerlink" title="资源统计对象"></a>资源统计对象</h3><p>将<code>hierarchy</code>与<code>subsys</code>关联之后，我们还需要记录每个<code>cgroup</code>在这个<code>subsys</code>上使用的资源总量。</p>
+<h3 id="资源统计对象">资源统计对象</h3>
+<p>将<code>hierarchy</code>与<code>subsys</code>关联之后，我们还需要记录每个<code>cgroup</code>在这个<code>subsys</code>上使用的资源总量。</p>
 <p>在上面的实例中，我们使用一个计数器来统计进程组对内存资源的使用情况，每个 <code>cgroup</code> 都需要一个这样的计数器来统计和限制进程组对内存资源的使用。</p>
 <p>在 Linux 内核中也有类似的 “计数器“，使用 <code>cgroup_subsys_state</code> 结构来表示（我们称它为 <code>资源统计对象</code>），其定义如下：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct cgroup_subsys_state &#123;</span><br><span class="line">    struct cgroup *cgroup; // 指向控制组对象</span><br><span class="line">    atomic_t refcnt;       // 引用计数器</span><br><span class="line">    unsigned long flags;   // 标志位</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -515,7 +521,7 @@
 <p>例如内存的基于cgroup_subsys_state的资源统计对象定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mem_cgroup</span> &#123;</span></span><br><span class="line">    <span class="comment">// 资源统计对象通用部分</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> <span class="title">css</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 资源统计对象私有部分</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">res_counter</span> <span class="title">res</span>;</span>  <span class="comment">// 用于统计进程组的内存使用情况</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mem_cgroup_lru_info</span> <span class="title">info</span>;</span></span><br><span class="line">    <span class="keyword">int</span> prev_priority;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mem_cgroup_stat</span> <span class="title">stat</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p><code>mem_cgroup</code> 结构与 <code>cgroup_subsys_state</code> 结构的关系如下图所示：</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017213609300.png" alt="image-20231017213609300" style="zoom:37%;" /></p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231017213609300.png" alt="image-20231017213609300" style="zoom:37%;" />
 <p><code>资源统计对象</code> 必须与 <code>控制组</code> 绑定，才能实现限制 <code>控制组</code> 对资源的使用。前面我们了解到 <code>cgroup</code> 结构中有个名为 <code>subsys</code> 的字段，如下代码所示：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> &#123;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 当前控制组关联的资源统计对象</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *<span class="title">subsys</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span> </span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>可以看出，<code>subsys</code> 字段是一个 <code>cgroup_subsys_state</code> 结构的数组，数组的大小为系统支持的 <code>资源控制子系统</code> 数（也就是说，数组上的每个槽位对应着一个子系统资统计对象）。如下图所示：</p>
@@ -532,8 +538,9 @@
 <p>在 <code>进程描述符结构（task_struct）</code> 中有个指向 <code>css_set</code> 结构的指针，如下所示：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct task_struct &#123;</span><br><span class="line">    ...</span><br><span class="line">    struct css_set *cgroups;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>所以，当把一个进程添加到一个 <code>cgroup</code> 时，将会把 <code>cgroup</code> 关联的 <code>资源统计对象</code> 添加到进程的 <code>cgroups</code> 字段中，从而使进程受到这些 <code>资源统计对象</code> 的限制 （这句话是实现cgroup控制的进程的精髓）。</p>
-<h2 id="如何在Chcore中实现Cgroup功能"><a href="#如何在Chcore中实现Cgroup功能" class="headerlink" title="如何在Chcore中实现Cgroup功能"></a>如何在Chcore中实现Cgroup功能</h2><p>我们先考虑实现memory的cgroup隔离，TA为我们提供了一个可能的思路：</p>
-<p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231020000057987.png" alt="image-20231020000057987" style="zoom:67%;" /></p>
+<h2 id="如何在Chcore中实现Cgroup功能">如何在Chcore中实现Cgroup功能</h2>
+<p>我们先考虑实现memory的cgroup隔离，TA为我们提供了一个可能的思路：</p>
+<img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20231020000057987.png" alt="image-20231020000057987" style="zoom:67%;" />
 <p>基本思路如下：</p>
 <ul>
 <li>在容器进程尝试分配内存并触发page fault尝试通过buddy算法获取物理页的时候修改该进程的物理内存使用量</li>
@@ -551,9 +558,10 @@
 <p>这里我们需要考虑的是fd不为1的情况，也就是内存分配而非文件内存映射，调用chcore_sys_call后，chcore会切换到el1特权级，并根据sys_call的table选择需要调用的handle函数,，以下为sys_handle_mmap的源代码:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">u64 <span class="title">sys_handle_mmap</span><span class="params">(u64 addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd,</span></span></span><br><span class="line"><span class="function"><span class="params">		    u64 offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vmspace</span> *<span class="title">vmspace</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">pmobject</span> *<span class="title">pmo</span>;</span></span><br><span class="line">	<span class="keyword">vmr_prop_t</span> vmr_prot;</span><br><span class="line">	u64 map_addr;</span><br><span class="line">	<span class="keyword">int</span> new_pmo_cap;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...delete some checks...</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add one anonymous mapping, i.e., the cap in new_pmo_cap */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Round up @length */</span></span><br><span class="line">	<span class="keyword">if</span> (length % PAGE_SIZE) &#123;</span><br><span class="line">		length = ROUND_UP(length, PAGE_SIZE);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Create the pmo for the mmap area */</span></span><br><span class="line">	pmo = obj_alloc(TYPE_PMO, <span class="keyword">sizeof</span>(*pmo));</span><br><span class="line">	<span class="keyword">if</span> (!pmo) &#123;</span><br><span class="line">		kinfo(<span class="string">&quot;Fail: cannot create the initial heap pmo.\n&quot;</span>);</span><br><span class="line">		BUG_ON(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/* Set the pmo type as PMO_ANONYM */</span></span><br><span class="line">	pmo_init(pmo, PMO_ANONYM, length, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Create the cap for this pmo */</span></span><br><span class="line">	new_pmo_cap = cap_alloc(current_cap_group, pmo, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (new_pmo_cap &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		kinfo(<span class="string">&quot;Fail: cannot create cap for the new pmo\n&quot;</span>);</span><br><span class="line">		BUG_ON(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Change the vmspace */</span></span><br><span class="line">	vmspace = obj_get(current_cap_group, VMSPACE_OBJ_ID, TYPE_VMSPACE);</span><br><span class="line">	vmr_prot = get_vmr_prot(prot);</span><br><span class="line">	map_addr = vmspace_mmap_with_pmo(vmspace, pmo, length, vmr_prot);</span><br><span class="line">	obj_put(vmspace);</span><br><span class="line"></span><br><span class="line">	kdebug(<span class="string">&quot;mmap done: map_addr is %p\n&quot;</span>, map_addr);</span><br><span class="line">	<span class="keyword">return</span> map_addr;</span><br><span class="line"></span><br><span class="line">err_exit:</span><br><span class="line">	map_addr = (u64)(<span class="number">-1L</span>);</span><br><span class="line">	<span class="keyword">return</span> map_addr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <ol>
-<li>创建 pmobject 对象（<code>obj_alloc</code> $\rightarrow$<code>kzalloc$$$\rightarrow$$$kmalloc</code>）</li>
-<li>创建 pmobject 对象的内核对象句柄<code>cap</code>（<code>cap_alloc$$$\rightarrow$$$kmalloc</code>）</li>
-<li>映射 pmobject 对象到虚拟地址空间：<ul>
+<li>创建 pmobject 对象（<code>obj_alloc</code> $\rightarrow$<code>kzalloc</code>$$\rightarrow$$<code>kmalloc</code>）</li>
+<li>创建 pmobject 对象的内核对象句柄<code>cap</code>（<code>cap_alloc</code>$$\rightarrow$$<code>kmalloc</code>）</li>
+<li>映射 pmobject 对象到虚拟地址空间：
+<ul>
 <li>获取当前进程的 vmspace 对象。</li>
 <li>通过 get_vmr_prot 将传入的保护标志转换为对应的虚拟内存区域属性。</li>
 <li>调用 vmspace_mmap_with_pmo ，将新创建的 pmobject 对象映射到进程的虚拟地址空间中。</li>
@@ -570,16 +578,23 @@
 <li>若为其他异常，如Page Fault，则在<code>irq_entry.c</code>中的<code>handle_entry_c</code>根据EC的不同分发到不同的入口。<code>handle_entry_c</code>中传入的两个参数：<code>esr</code>为Exception Syndrome Register，包含了导致这个exception的原因，从manual抄下来的原因在<code>register.h</code>中；<code>address</code>是导致这个异常的地址。</li>
 </ul>
 <p>结合以上知识，我们可以产生一些general的想法：</p>
-<h3 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h3><ul>
-<li><p>先在进程申请/释放内存的时候打印日志</p>
-</li>
-<li><p>构思用怎样的方式存储group-&gt;mem_use</p>
-</li>
-<li>看看linux是怎么进行文件操作的</li>
-<li>子进程应该继承父进程的cgroup</li>
-</ul>
+<h3 id="tips">tips</h3>
 <ul>
-<li>目前似乎不能pid-&gt;cap_group，可能需要加一个全局的数据结构来保存</li>
+<li>
+<p>先在进程申请/释放内存的时候打印日志</p>
+</li>
+<li>
+<p>构思用怎样的方式存储group-&gt;mem_use</p>
+</li>
+<li>
+<p>看看linux是怎么进行文件操作的</p>
+</li>
+<li>
+<p>子进程应该继承父进程的cgroup</p>
+</li>
+<li>
+<p>目前似乎不能pid-&gt;cap_group，可能需要加一个全局的数据结构来保存</p>
+</li>
 </ul>
 
 
@@ -735,7 +750,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">目录</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#%E5%AE%9E%E7%8E%B0Cgroup"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">实现Cgroup</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Linux%E4%B8%AD%E7%9A%84Cgroup%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%9E%90"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux中的Cgroup实现简析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">实现一个简单的进程组</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87Hierarchy%E7%BB%84%E7%BB%87CGroup"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">通过Hierarchy组织CGroup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E8%81%94Hierarchy%E4%B8%8ESubsys"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">关联Hierarchy与Subsys</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%B5%84%E6%BA%90%E7%BB%9F%E8%AE%A1%E5%AF%B9%E8%B1%A1"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">资源统计对象</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8Chcore%E4%B8%AD%E5%AE%9E%E7%8E%B0Cgroup%E5%8A%9F%E8%83%BD"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">如何在Chcore中实现Cgroup功能</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#tips"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">tips</span></a></li></ol></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">实现Cgroup</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Linux%E4%B8%AD%E7%9A%84Cgroup%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%9E%90"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux中的Cgroup实现简析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">实现一个简单的进程组</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87Hierarchy%E7%BB%84%E7%BB%87CGroup"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">通过Hierarchy组织CGroup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E8%81%94Hierarchy%E4%B8%8ESubsys"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">关联Hierarchy与Subsys</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%B5%84%E6%BA%90%E7%BB%9F%E8%AE%A1%E5%AF%B9%E8%B1%A1"><span class="toc-nav-number">1.1.4.</span> <span class="toc-nav-text">资源统计对象</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8Chcore%E4%B8%AD%E5%AE%9E%E7%8E%B0Cgroup%E5%8A%9F%E8%83%BD"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">如何在Chcore中实现Cgroup功能</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#tips"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">tips</span></a></li></ol></li></ol></li></ol>
         
         </div>
       </aside>

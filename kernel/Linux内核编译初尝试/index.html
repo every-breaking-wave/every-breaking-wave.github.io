@@ -246,28 +246,6 @@
           
           
           <li>
-            <a href="/about/">
-              
-              ABOUT
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
-            <a href="/archive/">
-              
-              ARCHIVES
-              
-              
-            </a>
-          </li>
-          
-          
-          
-          <li>
             <a href="/categories/">
               
               CATEGORIES
@@ -282,6 +260,28 @@
             <a href="/tags/">
               
               TAGS
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/about/">
+              
+              ABOUT
+              
+              
+            </a>
+          </li>
+          
+          
+          
+          <li>
+            <a href="/archive/">
+              
+              ARCHIVES
               
               
             </a>
@@ -469,7 +469,8 @@
       <!-- Post Container -->
       <div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1 post-container">
 
-        <h2 id="为什么需要切换Linux内核为自定义参数版本"><a href="#为什么需要切换Linux内核为自定义参数版本" class="headerlink" title="为什么需要切换Linux内核为自定义参数版本"></a>为什么需要切换Linux内核为自定义参数版本</h2><p>Linux内核是操作系统的核心，也是操作系统最基本的部分。Linux内核的体积结构是单内核的、但是他充分采用了微内核的设计思想、使得虽然是单内核、但工作在模块化的方式下、并且这个模块可以动态装载或卸载；Linux负责管理系统的进程、内存、设备驱动程序、文件和网络系统，决定着系统的性能和稳定性。如是我们在了解Linux内核的基础上根据自己的需要量身定制一个更高效，更稳定的内核，就需要我们手动去编译和配置内核里的各项相关的参数和信息了。</p>
+        <h2 id="为什么需要切换Linux内核为自定义参数版本">为什么需要切换Linux内核为自定义参数版本</h2>
+<p>Linux内核是操作系统的核心，也是操作系统最基本的部分。Linux内核的体积结构是单内核的、但是他充分采用了微内核的设计思想、使得虽然是单内核、但工作在模块化的方式下、并且这个模块可以动态装载或卸载；Linux负责管理系统的进程、内存、设备驱动程序、文件和网络系统，决定着系统的性能和稳定性。如是我们在了解Linux内核的基础上根据自己的需要量身定制一个更高效，更稳定的内核，就需要我们手动去编译和配置内核里的各项相关的参数和信息了。</p>
 <hr>
 <p>我的需求则是为了测试某个特定版本内核的性能，因此需要切换内核的版本。</p>
 <p>我们有两个方法可以做到这点：</p>
@@ -479,18 +480,24 @@
 </ul>
 <p>通过第一点我们可以运行起来一个简易的操作系统内核，但是它缺乏常见的库与程序，例如<code>ls</code>, <code>pwd</code>等的实现，尽管使用busybox可以帮助我们安装一些常用的库，但其在可用性上来说还是非常不足的。例如，用户无法自由地使用apt-get等包管理工具。</p>
 <p>我们也可以彻底地更换当前机器上的内核版本，但这样可能会导致各种兼容问题，具有一定风险，在尝试之前务必备份重要文件。</p>
-<h2 id="Linux内核编译"><a href="#Linux内核编译" class="headerlink" title="Linux内核编译"></a>Linux内核编译</h2><h3 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h3><p>不建议通过git clone的方式从github下载Linux的源代码，文件很大，可能因为网络问题而失败，可以从一下网站下载自己需要的版本：</p>
+<h2 id="Linux内核编译">Linux内核编译</h2>
+<h3 id="下载源码">下载源码</h3>
+<p>不建议通过git clone的方式从github下载Linux的源代码，文件很大，可能因为网络问题而失败，可以从一下网站下载自己需要的版本：</p>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="https://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub/linux/kernel/">Index of /sites/ftp.kernel.org/pub/linux/kernel/ (sjtu.edu.cn)</a></p>
+<li>
+<p><a target="_blank" rel="noopener" href="https://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub/linux/kernel/">Index of /sites/ftp.kernel.org/pub/linux/kernel/ (sjtu.edu.cn)</a></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git">kernel/git/torvalds/linux.git - Linux kernel source tree</a></p>
+<li>
+<p><a target="_blank" rel="noopener" href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git">kernel/git/torvalds/linux.git - Linux kernel source tree</a></p>
 </li>
 </ul>
 <p>我选择的6.2版本，可执行如下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub/linux/kernel/v6.x/linux-6.2.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="安装编译所需模块"><a href="#安装编译所需模块" class="headerlink" title="安装编译所需模块"></a>安装编译所需模块</h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get <span class="keyword">install </span><span class="keyword">bison </span>flex qemu <span class="keyword">bc </span><span class="keyword">build-essential </span>gcc g++ libelf-dev libssl-dev</span><br></pre></td></tr></table></figure>
+<h3 id="安装编译所需模块">安装编译所需模块</h3>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get <span class="keyword">install </span><span class="keyword">bison </span>flex qemu <span class="keyword">bc </span><span class="keyword">build-essential </span>gcc g++ libelf-dev libssl-dev</span><br></pre></td></tr></table></figure>
 <p>另外注意，在之后的编译过程中可能会出现问题，例如can’t inlcude xxx，这个时候查找对应报错并且install对应的库即可</p>
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><p>下载成功后解压，进入目录：</p>
+<h3 id="编译">编译</h3>
+<p>下载成功后解压，进入目录：</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">cd</span> linux-<span class="number">6</span>.<span class="number">2</span></span><br></pre></td></tr></table></figure>
 <p>开始编译</p>
 <figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">make</span> -j16       <span class="meta">#这一步耗时最长，-j 表示多线程编译，可加快速度，具体数字视机器而定</span></span><br><span class="line">sudo <span class="built_in">make</span> bzImage   <span class="meta"># 编译内核，成功后会得到 arch/x86/boot/bzImage, 是压缩后的镜像</span></span><br><span class="line">sudo <span class="built_in">make</span> modules_install  <span class="meta">#编译模块</span></span><br></pre></td></tr></table></figure>
@@ -500,9 +507,11 @@
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> make INSTALL_MOD_STRIP=<span class="number">1</span> modules_install -j<span class="number">4</span></span><br></pre></td></tr></table></figure>
 <p>接下来需要安装内核到对应目录</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> make install -j<span class="number">16</span></span><br></pre></td></tr></table></figure>
-<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> <span class="string">/boot</span></span><br><span class="line"><span class="keyword">ls</span></span><br></pre></td></tr></table></figure>
+<h3 id="验证安装">验证安装</h3>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> <span class="string">/boot</span></span><br><span class="line"><span class="keyword">ls</span></span><br></pre></td></tr></table></figure>
 <p>应该可以看到新安装的内核版本号相关的文件</p>
-<h3 id="切换版本"><a href="#切换版本" class="headerlink" title="切换版本"></a>切换版本</h3><p>通过命令查看当前Linux内核版本</p>
+<h3 id="切换版本">切换版本</h3>
+<p>通过命令查看当前Linux内核版本</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
 <p>首先使用命令查找新内核，更新grub文件</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo update grub</span></span><br></pre></td></tr></table></figure>
@@ -511,7 +520,8 @@
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20240105203030758.png" alt="image-20240105203030758"></p>
 <p>重启机器，就会自动弹出选择Linux内核的界面了。</p>
 <p>需要注意的是，如果修改的是服务器的配置，重启时由于grub界面会出现在内核加载之前，我们是无法通过ssh连接到服务器进行选择的，不过根据我的经验会自动选择一个版本，且为最新的（未进行过实验）。</p>
-<h2 id="通过QEMU来启动编译好的Kernel"><a href="#通过QEMU来启动编译好的Kernel" class="headerlink" title="通过QEMU来启动编译好的Kernel"></a>通过QEMU来启动编译好的Kernel</h2><p>以上我们演示了如何在本机上切换kernel版本，但如果我们只是想研究kernel的某个性质则不需要如此大费周折，QEMU为我们提供了系统虚拟化的机制。</p>
+<h2 id="通过QEMU来启动编译好的Kernel">通过QEMU来启动编译好的Kernel</h2>
+<p>以上我们演示了如何在本机上切换kernel版本，但如果我们只是想研究kernel的某个性质则不需要如此大费周折，QEMU为我们提供了系统虚拟化的机制。</p>
 <p>另外，之前所述的所有部署流程均可以在容器中进行，这样做的好处是</p>
 <ul>
 <li>host无需安装大量的依赖，例如qemu</li>
@@ -528,11 +538,12 @@
 <p>在启动编译后的压缩内核时，出现无法找到文件系统的错误：</p>
 <p><img src="https://wave-pics.oss-cn-shanghai.aliyuncs.com/pics/image-20240112150441937.png" alt="image-20240112150441937"></p>
 <p>为此，需要创建磁盘镜像，制作根文件系统，且准备init程序才能启动编译后的内核，简单的做法是基于<a target="_blank" rel="noopener" href="https://busybox.net/downloads/busybox-1.30.0.tar.bz2">busybox</a>构建启动程序。</p>
-<h3 id="编译Busybox"><a href="#编译Busybox" class="headerlink" title="编译Busybox"></a>编译Busybox</h3><p>下载busybox压缩包之后解压，进入目录，执行以下命令：</p>
+<h3 id="编译Busybox">编译Busybox</h3>
+<p>下载busybox压缩包之后解压，进入目录，执行以下命令：</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">make</span> defconfig</span><br><span class="line"><span class="keyword">make</span> memuconfig</span><br><span class="line"><span class="keyword">make</span></span><br><span class="line"><span class="keyword">make</span> CONFIG_PREFIX=<span class="symbol">&lt;path_to_disk_img_mount_point&gt;</span> install</span><br></pre></td></tr></table></figure>
 <p>在memuconfig编译完成后会进入图形化界面，此时选择</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Build </span><span class="keyword">BusyBox </span>as a static <span class="keyword">binary </span>(no <span class="keyword">shared </span>libs)</span><br></pre></td></tr></table></figure>
-<p>从而将Busybox编译为静态文件，编译完成并安装后，查看<path_to_disk_img_mount_point>目录，可以看到多了很多文件，此外，还需要创建额外的文件，包括rcS，inittab，proc，sys，dev等，具体可以参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hellogc/p/7482066.html">博客</a>。</p>
+<p>从而将Busybox编译为静态文件，编译完成并安装后，查看&lt;path_to_disk_img_mount_point&gt;目录，可以看到多了很多文件，此外，还需要创建额外的文件，包括rcS，inittab，proc，sys，dev等，具体可以参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hellogc/p/7482066.html">博客</a>。</p>
 <p>以下是直接可用的脚本，需要修改相应的路径。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># note: Linux kernel and busybox are in the same directory</span></span><br><span class="line">path_to_Linux_kernel=linux-4.18</span><br><span class="line">path_to_busybox=busybox-1.30.0</span><br><span class="line">path_to_root=`<span class="built_in">pwd</span>`</span><br><span class="line"> </span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_Linux_kernel</span></span><br><span class="line"><span class="comment">#make clean</span></span><br><span class="line"><span class="comment">#make distclean</span></span><br><span class="line"><span class="comment">#make x86_64_defconfig</span></span><br><span class="line"><span class="comment">#make bzImage</span></span><br><span class="line"><span class="comment">#make modules</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># obtain the bzImage</span></span><br><span class="line">cp arch/x86/boot/bzImage <span class="variable">$path_to_root</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># create disk by type ext4</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_root</span></span><br><span class="line"><span class="keyword">if</span> [ -d img ]; <span class="keyword">then</span></span><br><span class="line">    umount img</span><br><span class="line">    rm -rf img</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> [ -e disk.raw ]; <span class="keyword">then</span></span><br><span class="line">    rm disk.raw</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line">qemu-img create -f raw disk.raw 512M</span><br><span class="line">mkfs -t ext4 disk.raw</span><br><span class="line"> </span><br><span class="line">mkdir img</span><br><span class="line">sudo mount -o loop disk.raw img  <span class="comment"># note that, docker run --privileged=true</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># install modules and init program</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_Linux_kernel</span></span><br><span class="line">sudo make modules_install INSTALL_MOD_PATH=../img</span><br><span class="line"> </span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_root</span>/<span class="variable">$path_to_busybox</span></span><br><span class="line"><span class="keyword">if</span> [ -e busybox ]; <span class="keyword">then</span></span><br><span class="line">    make CONFIG_PREFIX=../img install</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Busybox is not built yet. Please build the busybox first!&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 2</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># update the init program</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_root</span>/img</span><br><span class="line"> </span><br><span class="line">mkdir -p etc/init.d</span><br><span class="line">mkdir proc</span><br><span class="line">mkdir sys</span><br><span class="line">mkdir dev</span><br><span class="line"> </span><br><span class="line">touch etc/init.d/rcS</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;#/bin/sh&quot;</span> &gt; etc/init.d/rcS</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;mount -t proc proc /proc&quot;</span> &gt;&gt; etc/init.d/rcS</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;mount -t sysfs sysfs /sys&quot;</span> &gt;&gt; etc/init.d/rcS</span><br><span class="line">chmod +777 etc/init.d/rcS</span><br><span class="line"> </span><br><span class="line"><span class="comment"># start the bzImage</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$path_to_root</span></span><br><span class="line">qemu-system-x86_64 -curses -m 512M -smp 4 -kernel bzImage -drive format=raw,file=disk.raw -append <span class="string">&quot;init=/linuxrc root=/dev/sda&quot;</span></span><br></pre></td></tr></table></figure>
 <p>最后，在docker容器中的ubuntu就可以启动qemu了。</p>
